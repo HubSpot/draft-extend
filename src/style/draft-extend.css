@@ -1,0 +1,23 @@
+.draft-extend {
+  position: relative;
+  min-height: 40px;
+}
+
+.draft-extend-editor {
+  border-bottom: solid transparent 40px;
+  padding: 4px;
+}
+
+.draft-extend-controls {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  margin: 0;
+  padding: 0;
+}
+
+.draft-extend-controls > li {
+  display: inline-block;
+  list-style-type: none;
+  margin: 0 1px;
+}
