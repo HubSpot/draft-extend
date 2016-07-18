@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "./bin/build",
-    "test": "./bin/test"
+    "test": "./bin/test",
+    "prepublish": "npm run build"
   },
   "keywords": [
     "draft",
@@ -29,6 +30,7 @@
     "babel-preset-react": "^6.5.0",
     "babel-standalone": "^6.7.7",
     "es6-shim": "^0.35.0",
-    "webpack": "^1.13.0"
+    "webpack": "^1.13.0",
+    "draft-convert": "0.4.0"
   }
 }
