@@ -1,6 +1,6 @@
 {
   "name": "draft-extend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Build extensible Draft.js editors with configurable plugins and integrated serialization.",
   "main": "index.js",
   "scripts": {
