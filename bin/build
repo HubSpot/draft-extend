@@ -1,0 +1,4 @@
+#!/bin/bash
+./bin/build-dev;
+./bin/build-prod;
+cp ./src/style/*.css ./build/;

@@ -31,6 +31,6 @@
     "babel-standalone": "^6.7.7",
     "es6-shim": "^0.35.0",
     "webpack": "^1.13.0",
-    "draft-convert": "0.4.0"
+    "draft-convert": "^1.0.0"
   }
 }
