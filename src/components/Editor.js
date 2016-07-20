@@ -53,7 +53,6 @@ export default React.createClass({
 
   getInitialState() {
     const decorator = new CompositeDecorator(this.props.decorators);
-    this.keyCommandListeners = List(this.props.keyCommandListeners);
     return {
       decorator
     };
@@ -64,6 +63,10 @@ export default React.createClass({
       editorState: this.getDecoratedState(),
       onChange: this.props.onChange
     };
+  },
+
+  componentWillMount() {
+    this.keyCommandListeners = List(this.props.keyCommandListeners);
   },
 
   componentWillReceiveProps(nextProps) {
