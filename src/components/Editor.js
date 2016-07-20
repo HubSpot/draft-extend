@@ -53,10 +53,8 @@ export default React.createClass({
 
   getInitialState() {
     const decorator = new CompositeDecorator(this.props.decorators);
-
     return {
-      decorator,
-      keyCommandListeners: List(this.props.keyCommandListeners)
+      decorator
     };
   },
 
@@ -65,6 +63,10 @@ export default React.createClass({
       editorState: this.getDecoratedState(),
       onChange: this.props.onChange
     };
+  },
+
+  componentWillMount() {
+    this.keyCommandListeners = List(this.props.keyCommandListeners);
   },
 
   componentWillReceiveProps(nextProps) {
@@ -81,16 +83,12 @@ export default React.createClass({
   },
 
   addKeyCommandListener(listener) {
-    this.setState({
-      keyCommandListeners: this.state.keyCommandListeners.unshift(listener)
-    });
+    this.keyCommandListeners = this.keyCommandListeners.unshift(listener);
   },
 
   removeKeyCommandListener(listener) {
-    this.setState({
-      keyCommandListeners: this.state.keyCommandListeners.filterNot((l) => {
-        return l === listener;
-      })
+    this.keyCommandListeners = this.keyCommandListeners.filterNot((l) => {
+      return l === listener;
     });
   },
 
@@ -104,10 +102,9 @@ export default React.createClass({
   },
 
   handleKeyCommand(command, keyboardEvent = null) {
-    const {keyCommandListeners} = this.state;
     const decoratedState = this.getDecoratedState();
 
-    const result = keyCommandListeners.reduce(({state, hasChanged}, listener) => {
+    const result = this.keyCommandListeners.reduce(({state, hasChanged}, listener) => {
       if (hasChanged === true) {
         return {
           state,
