@@ -27,8 +27,6 @@ const propTypes = {
   onDownArrow: PropTypes.func
 };
 
-let keyCommandListeners = List();
-
 export default React.createClass({
   propTypes,
 
@@ -55,8 +53,7 @@ export default React.createClass({
 
   getInitialState() {
     const decorator = new CompositeDecorator(this.props.decorators);
-    keyCommandListeners = List(this.props.keyCommandListeners);
-
+    this.keyCommandListeners = List(this.props.keyCommandListeners);
     return {
       decorator
     };
@@ -83,11 +80,11 @@ export default React.createClass({
   },
 
   addKeyCommandListener(listener) {
-    keyCommandListeners = keyCommandListeners.unshift(listener);
+    this.keyCommandListeners = this.keyCommandListeners.unshift(listener);
   },
 
   removeKeyCommandListener(listener) {
-    keyCommandListeners = keyCommandListeners.filterNot((l) => {
+    this.keyCommandListeners = this.keyCommandListeners.filterNot((l) => {
       return l === listener;
     });
   },
@@ -104,7 +101,7 @@ export default React.createClass({
   handleKeyCommand(command, keyboardEvent = null) {
     const decoratedState = this.getDecoratedState();
 
-    const result = keyCommandListeners.reduce(({state, hasChanged}, listener) => {
+    const result = this.keyCommandListeners.reduce(({state, hasChanged}, listener) => {
       if (hasChanged === true) {
         return {
           state,
