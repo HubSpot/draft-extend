@@ -160,8 +160,8 @@ const createPlugin = ({
           return oldOptions.textToEntity(text).concat(textToEntity(text));
         };
 
-        const newStyleToHTML = Object.assign(oldOptions.styleToHTML, styleToHTML);
-        const newBlockToHTML = Object.assign(oldOptions.blockToHTML, blockToHTML);
+        const newStyleToHTML = Object.assign({}, oldOptions.styleToHTML, styleToHTML);
+        const newBlockToHTML = Object.assign({}, oldOptions.blockToHTML, blockToHTML);
 
         const newEntityToHTML = (entity, originalText) => {
           const acc = oldOptions.entityToHTML(entity, originalText);
