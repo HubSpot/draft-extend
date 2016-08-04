@@ -31,7 +31,7 @@ export default React.createClass({
   propTypes,
 
   childContextTypes: {
-    editorState: PropTypes.instanceOf(EditorState),
+    getEditorState: PropTypes.func,
     onChange: PropTypes.func
   },
 
@@ -60,7 +60,7 @@ export default React.createClass({
 
   getChildContext() {
     return {
-      editorState: this.getDecoratedState(),
+      getEditorState: this.getDecoratedState,
       onChange: this.props.onChange
     };
   },
