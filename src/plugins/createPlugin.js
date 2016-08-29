@@ -1,5 +1,7 @@
 import React, {PropTypes} from 'react';
 import memoize from '../util/memoize';
+import blockTypeObjectFunction from '../util/blockTypeObjectFunction';
+import accumulateFunction from '../util/accumulateFunction';
 
 const emptyFunction = () => {};
 const emptyArray = [];
@@ -9,18 +11,10 @@ const defaultHTMLToStyle = (nodeName, node, currentStyle) => currentStyle;
 const defaultHTMLToBlock = (nodeName, node, lastList) => undefined;
 const defaultHTMLToEntity = (nodeName, node) => undefined;
 const defaultTextToEntity = (text) => [];
+const defaultBlockToHTML = (block) => undefined;
 const defaultEntityToHTML = (entity, originalText) => originalText;
 
-// utility function to accumulate the common plugin option function pattern of
-// handling args by returning a non-null result or delegate to other plugins
-const accumulateFunction = (acc, newFn) => (...args) => {
-  const result = newFn(...args);
-  if (result === null || result === undefined) {
-    return acc(...args);
-  }
-  return result;
-};
-
+const memoizedBlockTypeObjectFunction = memoize(blockTypeObjectFunction);
 const memoizedAccumulateFunction = memoize(accumulateFunction);
 const memoizedAssign = memoize((...args) => Object.assign({}, ...args));
 const memoizedConcat = memoize((a1, a2) => a1.concat(a2));
@@ -45,7 +39,7 @@ const createPlugin = ({
   htmlToEntity = defaultHTMLToEntity,
   textToEntity = defaultTextToEntity,
   styleToHTML = emptyObject,
-  blockToHTML = emptyObject,
+  blockToHTML = defaultBlockToHTML,
   entityToHTML = defaultEntityToHTML,
 }) => (ToWrap) => {
   decorators = memoizedCoerceArray(decorators);
@@ -98,9 +92,9 @@ const createPlugin = ({
         const newDecorators = memoizedConcat(this.props.decorators, decorators);
         const newButtons = memoizedConcat(this.props.buttons, buttons);
         const newOverlays = memoizedConcat(this.props.overlays, overlays);
-        const newBlockRendererFn = memoizedAccumulateFunction(this.props.blockRendererFn, blockRendererFn);
-        const newBlockStyleFn = memoizedAccumulateFunction(this.props.blockStyleFn, blockStyleFn);
-        const newKeyBindingFn = memoizedAccumulateFunction(this.props.keyBindingFn, keyBindingFn);
+        const newBlockRendererFn = memoizedAccumulateFunction(blockRendererFn, this.props.blockRendererFn);
+        const newBlockStyleFn = memoizedAccumulateFunction(blockStyleFn, this.props.blockStyleFn);
+        const newKeyBindingFn = memoizedAccumulateFunction(keyBindingFn, this.props.keyBindingFn);
         const newKeyCommandListeners = memoizedConcat(this.props.keyCommandListeners, memoizedCoerceArray(keyCommandListener));
 
         return (
@@ -135,7 +129,6 @@ const createPlugin = ({
           blockToHTML,
           entityToHTML
         })(...args);
-
       } else {
         // receiving a plugin to accumulate upon for a converter - accumulate
         // options and return a new plugin wrapped around the passed one ready
@@ -148,20 +141,20 @@ const createPlugin = ({
           return htmlToStyle(nodeName, node, acc);
         };
 
-        const newHTMLToBlock = (nodeName, node, lastList) => {
-          return oldOptions.htmlToBlock(nodeName, node, lastList) || htmlToBlock(nodeName, node, lastList);
-        };
+        const newHTMLToBlock = memoizedAccumulateFunction(htmlToBlock, oldOptions.htmlToBlock);
 
-        const newHTMLToEntity = (nodeName, node) => {
-          return oldOptions.htmlToEntity(nodeName, node) || htmlToEntity(nodeName, node);
-        };
+        const newHTMLToEntity = memoizedAccumulateFunction(htmlToEntity, oldOptions.htmlToEntity);
 
         const newTextToEntity = (text) => {
           return oldOptions.textToEntity(text).concat(textToEntity(text));
         };
 
         const newStyleToHTML = Object.assign({}, oldOptions.styleToHTML, styleToHTML);
-        const newBlockToHTML = Object.assign({}, oldOptions.blockToHTML, blockToHTML);
+
+        const newBlockToHTML = memoizedAccumulateFunction(
+          memoizedBlockTypeObjectFunction(blockToHTML),
+          memoizedBlockTypeObjectFunction(oldOptions.blockToHTML)
+        );
 
         const newEntityToHTML = (entity, originalText) => {
           const acc = oldOptions.entityToHTML(entity, originalText);
