@@ -24,7 +24,8 @@ const propTypes = {
   onEscape: PropTypes.func,
   onTab: PropTypes.func,
   onUpArrow: PropTypes.func,
-  onDownArrow: PropTypes.func
+  onDownArrow: PropTypes.func,
+  readOnly: PropTypes.bool
 };
 
 export default React.createClass({
@@ -32,6 +33,7 @@ export default React.createClass({
 
   childContextTypes: {
     getEditorState: PropTypes.func,
+    getReadOnly: PropTypes.func,
     onChange: PropTypes.func
   },
 
@@ -47,7 +49,8 @@ export default React.createClass({
       blockRendererFn: () => {},
       blockStyleFn: () => {},
       keyBindingFn: () => {},
-      keyCommandListeners: []
+      keyCommandListeners: [],
+      readOnly: false
     };
   },
 
@@ -61,6 +64,7 @@ export default React.createClass({
   getChildContext() {
     return {
       getEditorState: this.getDecoratedState,
+      getReadOnly: this.getReadOnly,
       onChange: this.props.onChange
     };
   },
@@ -178,6 +182,10 @@ export default React.createClass({
       acc[prop] = this.props[prop];
       return acc;
     }, {});
+  },
+
+  getReadOnly() {
+    return this.props.readOnly;
   },
 
   getDecoratedState() {
