@@ -21,7 +21,7 @@ export default {
   styleObjectToString(styles) {
     return Object.keys(styles).map((styleName) => {
       return `${camelCaseToHyphen(styleName)}: ${styles[styleName]};`;
-    }).join(' ').replace(/"/, '\\"');
+    }).join(' ').replace(/"/g, '\\"');
   },
 
   entityStrategy: (entityType) => (contentBlock, callback) => {
