@@ -2,6 +2,7 @@ import React, {PropTypes} from 'react';
 import {List} from 'immutable';
 import {
   Editor,
+  genKey,
   EditorState,
   CompositeDecorator,
   getDefaultKeyBinding
@@ -224,7 +225,7 @@ export default React.createClass({
 
     return this.props.overlays.map((Overlay) => {
       return (
-        <OverlayWrapper>
+        <OverlayWrapper key={genKey()}>
           <Overlay
             {...this.getOtherProps()}
             editorState={decoratedState}
