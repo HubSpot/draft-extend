@@ -223,9 +223,9 @@ export default React.createClass({
   renderOverlays() {
     const decoratedState = this.getDecoratedState();
 
-    return this.props.overlays.map((Overlay) => {
+    return this.props.overlays.map((Overlay, index) => {
       return (
-        <OverlayWrapper key={genKey()}>
+        <OverlayWrapper key={index}>
           <Overlay
             {...this.getOtherProps()}
             editorState={decoratedState}
