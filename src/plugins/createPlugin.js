@@ -1,7 +1,8 @@
 import React, {PropTypes} from 'react';
 import memoize from '../util/memoize';
-import blockTypeObjectFunction from '../util/blockTypeObjectFunction';
+import compose from '../util/compose';
 import accumulateFunction from '../util/accumulateFunction';
+import middlewareAdapter from '../util/middlewareAdapter';
 
 const emptyFunction = () => {};
 const emptyArray = [];
@@ -11,10 +12,11 @@ const defaultHTMLToStyle = (nodeName, node, currentStyle) => currentStyle;
 const defaultHTMLToBlock = (nodeName, node, lastList) => undefined;
 const defaultHTMLToEntity = (nodeName, node) => undefined;
 const defaultTextToEntity = (text) => [];
-const defaultBlockToHTML = (block) => undefined;
-const defaultEntityToHTML = (entity, originalText) => originalText;
+const defaultStyleToHTML = (next) => (style) => next(style);
+const defaultBlockToHTML = (next) => (block) => next(block);
+const defaultEntityToHTML = (next) => (entity, originalText) => next(entity, originalText);
 
-const memoizedBlockTypeObjectFunction = memoize(blockTypeObjectFunction);
+const memoizedCompose = memoize(compose);
 const memoizedAccumulateFunction = memoize(accumulateFunction);
 const memoizedAssign = memoize((...args) => Object.assign({}, ...args));
 const memoizedConcat = memoize((a1, a2) => a1.concat(a2));
@@ -38,7 +40,7 @@ const createPlugin = ({
   htmlToBlock = defaultHTMLToBlock,
   htmlToEntity = defaultHTMLToEntity,
   textToEntity = defaultTextToEntity,
-  styleToHTML = emptyObject,
+  styleToHTML = defaultStyleToHTML,
   blockToHTML = defaultBlockToHTML,
   entityToHTML = defaultEntityToHTML,
 }) => (ToWrap) => {
@@ -115,11 +117,9 @@ const createPlugin = ({
     });
   } else {
     // wrapping a converter function
-
     return (...args) => {
       if (args.length === 1 && (typeof args[0] === 'string' || (args[0].hasOwnProperty('_map') && args[0].getBlockMap != null))) {
         // actively converting an HTML string/ContentState, so pass additional options to the next converter function.
-
         return ToWrap({
           htmlToStyle,
           htmlToBlock,
@@ -149,17 +149,14 @@ const createPlugin = ({
           return oldOptions.textToEntity(text).concat(textToEntity(text));
         };
 
-        const newStyleToHTML = Object.assign({}, oldOptions.styleToHTML, styleToHTML);
+        const newStyleToHTML = memoizedCompose(middlewareAdapter(styleToHTML), middlewareAdapter(oldOptions.styleToHTML));
+        newStyleToHTML.__isMiddleware = true;
 
-        const newBlockToHTML = memoizedAccumulateFunction(
-          memoizedBlockTypeObjectFunction(blockToHTML),
-          memoizedBlockTypeObjectFunction(oldOptions.blockToHTML)
-        );
+        const newBlockToHTML = memoizedCompose(middlewareAdapter(blockToHTML), middlewareAdapter(oldOptions.blockToHTML));
+        newBlockToHTML.__isMiddleware = true;
 
-        const newEntityToHTML = (entity, originalText) => {
-          const acc = oldOptions.entityToHTML(entity, originalText);
-          return entityToHTML(entity, acc);
-        };
+        const newEntityToHTML = memoizedCompose(middlewareAdapter(entityToHTML), middlewareAdapter(oldOptions.entityToHTML));
+        newEntityToHTML.__isMiddleware = true;
 
         return createPlugin({
           htmlToStyle: newHTMLToStyle,
