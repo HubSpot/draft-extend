@@ -2,7 +2,6 @@ import React, {PropTypes} from 'react';
 import {List} from 'immutable';
 import {
   Editor,
-  genKey,
   EditorState,
   CompositeDecorator,
   getDefaultKeyBinding
