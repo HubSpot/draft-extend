@@ -1,4 +1,5 @@
 import React, {PropTypes} from 'react';
+import {OrderedSet} from 'immutable';
 import memoize from '../util/memoize';
 import compose from '../util/compose';
 import accumulateFunction from '../util/accumulateFunction';
@@ -8,19 +9,15 @@ const emptyFunction = () => {};
 const emptyArray = [];
 const emptyObject = {};
 
-const defaultHTMLToStyle = (nodeName, node, currentStyle) => currentStyle;
-const defaultHTMLToBlock = (nodeName, node, lastList) => undefined;
-const defaultHTMLToEntity = (nodeName, node) => undefined;
-const defaultTextToEntity = (text) => [];
-const defaultStyleToHTML = (next) => (style) => next(style);
-const defaultBlockToHTML = (next) => (block) => next(block);
-const defaultEntityToHTML = (next) => (entity, originalText) => next(entity, originalText);
+const defaultMiddlewareFunction = (next) => (...args) => next(...args);
 
 const memoizedCompose = memoize(compose);
 const memoizedAccumulateFunction = memoize(accumulateFunction);
 const memoizedAssign = memoize((...args) => Object.assign({}, ...args));
 const memoizedConcat = memoize((a1, a2) => a1.concat(a2));
 const memoizedCoerceArray = memoize((arg) => Array.isArray(arg) ? arg : [arg]);
+const memoizedPassEmptyStyles = memoize((func) => (nodeName, node) => func(nodeName, node, OrderedSet()));
+const memoizedMiddlewareAdapter = memoize(middlewareAdapter);
 
 const createPlugin = ({
   displayName = 'Plugin',
@@ -36,13 +33,13 @@ const createPlugin = ({
   keyCommandListener = emptyFunction,
 
   // HTML conversion options
-  htmlToStyle = defaultHTMLToStyle,
-  htmlToBlock = defaultHTMLToBlock,
-  htmlToEntity = defaultHTMLToEntity,
-  textToEntity = defaultTextToEntity,
-  styleToHTML = defaultStyleToHTML,
-  blockToHTML = defaultBlockToHTML,
-  entityToHTML = defaultEntityToHTML,
+  htmlToStyle = defaultMiddlewareFunction,
+  htmlToBlock = defaultMiddlewareFunction,
+  htmlToEntity = defaultMiddlewareFunction,
+  textToEntity = defaultMiddlewareFunction,
+  styleToHTML = defaultMiddlewareFunction,
+  blockToHTML = defaultMiddlewareFunction,
+  entityToHTML = defaultMiddlewareFunction,
 }) => (ToWrap) => {
   decorators = memoizedCoerceArray(decorators);
   buttons = memoizedCoerceArray(buttons);
@@ -136,26 +133,25 @@ const createPlugin = ({
 
         const oldOptions = args[0];
 
-        const newHTMLToStyle = (nodeName, node, currentStyle) => {
-          const acc = oldOptions.htmlToStyle(nodeName, node, currentStyle);
-          return htmlToStyle(nodeName, node, acc);
-        };
+        const newHTMLToStyle = memoizedCompose(memoizedMiddlewareAdapter(memoizedPassEmptyStyles(htmlToStyle)), memoizedMiddlewareAdapter(oldOptions.htmlToStyle));
+        newHTMLToStyle.__isMiddleware = true;
 
-        const newHTMLToBlock = memoizedAccumulateFunction(htmlToBlock, oldOptions.htmlToBlock);
+        const newHTMLToBlock = memoizedCompose(memoizedMiddlewareAdapter(htmlToBlock), memoizedMiddlewareAdapter(oldOptions.htmlToBlock));
+        newHTMLToBlock.__isMiddleware = true;
 
-        const newHTMLToEntity = memoizedAccumulateFunction(htmlToEntity, oldOptions.htmlToEntity);
+        const newHTMLToEntity = memoizedCompose(memoizedMiddlewareAdapter(htmlToEntity), memoizedMiddlewareAdapter(oldOptions.htmlToEntity));
+        newHTMLToEntity.__isMiddleware = true;
 
-        const newTextToEntity = (text) => {
-          return oldOptions.textToEntity(text).concat(textToEntity(text));
-        };
+        const newTextToEntity = memoizedCompose(memoizedMiddlewareAdapter(textToEntity), memoizedMiddlewareAdapter(oldOptions.textToEntity));
+        newTextToEntity.__isMiddleware = true;
 
-        const newStyleToHTML = memoizedCompose(middlewareAdapter(styleToHTML), middlewareAdapter(oldOptions.styleToHTML));
+        const newStyleToHTML = memoizedCompose(memoizedMiddlewareAdapter(styleToHTML), memoizedMiddlewareAdapter(oldOptions.styleToHTML));
         newStyleToHTML.__isMiddleware = true;
 
-        const newBlockToHTML = memoizedCompose(middlewareAdapter(blockToHTML), middlewareAdapter(oldOptions.blockToHTML));
+        const newBlockToHTML = memoizedCompose(memoizedMiddlewareAdapter(blockToHTML), memoizedMiddlewareAdapter(oldOptions.blockToHTML));
         newBlockToHTML.__isMiddleware = true;
 
-        const newEntityToHTML = memoizedCompose(middlewareAdapter(entityToHTML), middlewareAdapter(oldOptions.entityToHTML));
+        const newEntityToHTML = memoizedCompose(memoizedMiddlewareAdapter(entityToHTML), memoizedMiddlewareAdapter(oldOptions.entityToHTML));
         newEntityToHTML.__isMiddleware = true;
 
         return createPlugin({
