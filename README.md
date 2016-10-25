@@ -13,7 +13,7 @@
 ***
 
 ## Overview
-Draft Extend is a platform to build a full-featured Draft.js editor using modular plugins that can integrate with [draft-convert](#) to serialize with HTML. The higher-order function API makes it extremely easy to use any number of plugins for rendering and conversion.
+Draft Extend is a platform to build a full-featured Draft.js editor using modular plugins that can integrate with [draft-convert](http://github.com/HubSpot/draft-convert) to serialize with HTML. The higher-order function API makes it extremely easy to use any number of plugins for rendering and conversion.
 
 #### Usage:
 ```javascript
