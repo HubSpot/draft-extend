@@ -34,6 +34,7 @@ export default React.createClass({
   childContextTypes: {
     getEditorState: PropTypes.func,
     getReadOnly: PropTypes.func,
+    setReadOnly: PropTypes.func,
     onChange: PropTypes.func
   },
 
@@ -57,7 +58,8 @@ export default React.createClass({
   getInitialState() {
     const decorator = new CompositeDecorator(this.props.decorators);
     return {
-      decorator
+      decorator,
+      readOnly: false
     };
   },
 
@@ -65,6 +67,7 @@ export default React.createClass({
     return {
       getEditorState: this.getDecoratedState,
       getReadOnly: this.getReadOnly,
+      setReadOnly: this.setReadOnly,
       onChange: this.props.onChange
     };
   },
@@ -185,7 +188,11 @@ export default React.createClass({
   },
 
   getReadOnly() {
-    return this.props.readOnly;
+    return this.state.readOnly || this.props.readOnly;
+  },
+
+  setReadOnly(readOnly) {
+    this.setState({readOnly});
   },
 
   getDecoratedState() {
@@ -247,8 +254,9 @@ export default React.createClass({
     } = this.props;
 
     const decoratedState = this.getDecoratedState();
-
     const className = `draft-extend ${this.props.className}`;
+
+    const readOnly = this.getReadOnly();
 
     return (
       <div className={className}>
@@ -260,6 +268,7 @@ export default React.createClass({
             {...otherProps}
             ref="editor"
             editorState={decoratedState}
+            readOnly={readOnly}
             onChange={onChange}
             blockStyleFn={blockStyleFn}
             blockRendererFn={blockRendererFn}
