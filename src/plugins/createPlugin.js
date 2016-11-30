@@ -10,6 +10,7 @@ const emptyArray = [];
 const emptyObject = {};
 
 const defaultMiddlewareFunction = (next) => (...args) => next(...args);
+defaultMiddlewareFunction.__isMiddleware = true;
 
 const memoizedCompose = memoize(compose);
 const memoizedAccumulateFunction = memoize(accumulateFunction);

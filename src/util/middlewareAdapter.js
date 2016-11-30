@@ -1,4 +1,3 @@
-import {isValidElement} from 'react';
 import {OrderedSet} from 'immutable';
 
 // function to handle previous techniques to convert to HTML, including
@@ -53,7 +52,8 @@ const middlewareAdapter = (middleware) => {
         returnValue = nonMiddlewareResult.concat(next(...args));
       } else if (OrderedSet.isOrderedSet(nonMiddlewareResult)) {
         // returned an OrderedSet from htmlToStyle, pass to next as third argument
-        returnValue = nonMiddlewareResult.union(next(...args));
+        const previousStyles = args[args.length - 1];
+        returnValue = previousStyles.union(nonMiddlewareResult).union(next(...args));
       } else if (typeof nonMiddlewareResult === 'function') {
         // most middleware HOFs will return another function when invoked, so we
         // can assume that it is one here
