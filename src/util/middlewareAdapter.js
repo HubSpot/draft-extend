@@ -47,6 +47,10 @@ const middlewareAdapter = (middleware) => {
         // the behavior for non-middleware functions is to delegate by returning
         // `null` or `undefined`, so do delegation for them
         returnValue = next(...args);
+      }
+      else if (args.length === 2 && typeof args[1] === 'string' && args[1] === nonMiddlewareResult) {
+        // entityToHTML option returned `originalText`, i.e. no change was made
+        returnValue = next(...args);
       } else if (Array.isArray(nonMiddlewareResult)) {
         // returned an array from a textToEntity function, concat with next
         returnValue = nonMiddlewareResult.concat(next(...args));
