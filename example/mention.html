@@ -17,6 +17,7 @@
     <div id="target"></div>
     <script src="../node_modules/react/dist/react.min.js"></script>
     <script src="../node_modules/react-dom/dist/react-dom.min.js"></script>
+    <script src="../node_modules/react-dom/dist/react-dom-server.min.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
     <script src="../node_modules/es6-shim/es6-shim.js"></script>
     <script src="../node_modules/babel-standalone/babel.min.js"></script>
@@ -219,6 +220,7 @@
                 style={{
                   margin: '0',
                   padding: '0',
+                  fontFamily: 'sans-serif'
                 }}
               >
                 <li
@@ -262,7 +264,8 @@
             <ul
               style={{
                 margin: '0',
-                padding: '0'
+                padding: '0',
+                fontFamily: 'sans-serif'
               }}
             >
               {this.renderResults()}

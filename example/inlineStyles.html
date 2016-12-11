@@ -17,6 +17,7 @@
     <div id="target"></div>
     <script src="../node_modules/react/dist/react.min.js"></script>
     <script src="../node_modules/react-dom/dist/react-dom.min.js"></script>
+    <script src="../node_modules/react-dom/dist/react-dom-server.min.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
     <script src="../node_modules/es6-shim/es6-shim.js"></script>
     <script src="../node_modules/babel-standalone/babel.min.js"></script>
@@ -48,6 +49,15 @@
         {label: 'Strikethrough', style: 'STRIKETHROUGH'}
       ];
 
+      const styleToHTML = (style) => {
+        if (style === 'STRIKETHROUGH') {
+          return <s />;
+        }
+        if (style === 'CODE') {
+          return <div style={{fontFamily: 'monospace'}} />;
+        }
+      };
+
       const createInlineStyle = ({label, style}) => {
         return ({editorState, onChange}) => {
           const toggleStyle = () => {
@@ -74,7 +84,8 @@
       };
 
       const InlinePlugin = createPlugin({
-        buttons: INLINE_STYLES.map(createInlineStyle)
+        buttons: INLINE_STYLES.map(createInlineStyle),
+        styleToHTML
       });
 
       const WithPlugin = InlinePlugin(Editor);
