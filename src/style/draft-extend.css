@@ -1,23 +1,24 @@
-.draft-extend {
-  position: relative;
-  min-height: 40px;
-}
-
 .draft-extend-editor {
-  border-bottom: solid transparent 40px;
   padding: 4px;
 }
 
-.draft-extend-controls {
-  position: absolute;
-  bottom: 5px;
-  left: 5px;
-  margin: 0;
-  padding: 0;
+.DraftEditor-root {
+  padding-bottom: 1rem;
 }
 
-.draft-extend-controls > li {
+.draft-extend-controls {
+  padding: 0;
+  margin: 0;
+}
+
+.draft-extend-controls > * {
   display: inline-block;
   list-style-type: none;
-  margin: 0 1px;
+  margin: 0;
+  margin-right: 4px;
+}
+
+.draft-extend-controls > *:last-child {
+  display: inline-block;
+  margin-right: 0;
 }

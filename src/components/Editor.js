@@ -213,15 +213,14 @@ export default React.createClass({
 
     return this.props.buttons.map((Button, index) => {
       return (
-        <li key={`button-${index}`}>
-          <Button
-            {...this.getOtherProps()}
-            editorState={decoratedState}
-            onChange={this.props.onChange}
-            addKeyCommandListener={this.addKeyCommandListener}
-            removeKeyCommandListener={this.removeKeyCommandListener}
-          />
-        </li>
+        <Button
+          {...this.getOtherProps()}
+          addKeyCommandListener={this.addKeyCommandListener}
+          editorState={decoratedState}
+          key={`button${index}`}
+          onChange={this.props.onChange}
+          removeKeyCommandListener={this.removeKeyCommandListener}
+        />
       );
     });
   },
@@ -260,9 +259,6 @@ export default React.createClass({
 
     return (
       <div className={className}>
-        <ul className="draft-extend-controls">
-          {this.renderPluginButtons()}
-        </ul>
         <div className="draft-extend-editor">
           <Editor
             {...otherProps}
@@ -281,6 +277,9 @@ export default React.createClass({
             onUpArrow={this.onUpArrow}
             onDownArrow={this.onDownArrow}
           />
+          <div className="draft-extend-controls">
+            {this.renderPluginButtons()}
+          </div>
           <div className="draft-extend-overlays">
             {this.renderOverlays()}
           </div>
