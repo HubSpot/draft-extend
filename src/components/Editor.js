@@ -35,7 +35,9 @@ export default React.createClass({
     getEditorState: PropTypes.func,
     getReadOnly: PropTypes.func,
     setReadOnly: PropTypes.func,
-    onChange: PropTypes.func
+    onChange: PropTypes.func,
+    focus: PropTypes.func,
+    blur: PropTypes.func
   },
 
   getDefaultProps() {
@@ -68,7 +70,9 @@ export default React.createClass({
       getEditorState: this.getDecoratedState,
       getReadOnly: this.getReadOnly,
       setReadOnly: this.setReadOnly,
-      onChange: this.props.onChange
+      onChange: this.props.onChange,
+      focus: this.focus,
+      blur: this.blur
     };
   },
 
