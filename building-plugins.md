@@ -72,7 +72,11 @@ const htmlToEntity = (nodeName, node) => {
 // Convert entities to HTML for output
 const entityToHTML = (entity, originalText) => {
     if (entity.type === ENTITY_TYPE) {
-        return `<a href="${entity.data.href}" target="${entity.data.target}">${originalText}</a>`;
+        return (
+            <a href={entity.data.href} target={entity.data.target}>
+                {originalText}
+            </a>
+        );
     }
     return originalText;
 };
@@ -90,8 +94,8 @@ export default LinkPlugin;
 
 ## createPlugin
 Factory function to create plugins. `createPlugin` takes one `options` object argument. All properties of `options` are optional.
-#### Plugin options
-**Editor rendering options**
+### Plugin options
+#### Editor rendering options
 - `displayName: string` - `displayName` of the higher-order component when wrapping around `Editor`.
     - default: `'Plugin'`
 - `buttons: Array<Component> | Component` - Zero or more button components to add to the Editor. If only one button is needed it may be passed by itself without an array.  See [Buttons & Overlays](#buttons--overlays) for more information on props and usage.
@@ -109,36 +113,52 @@ Factory function to create plugins. `createPlugin` takes one `options` object ar
 - `keyBindingFn: function(e: SyntheticKeyboardEvent): ?string` - Function to assign named key commands to key events on the editor. Works as described in [Draft.js' key bindings documentation](https://facebook.github.io/draft-js/docs/advanced-topics-key-bindings.html). If the plugin should not name the key command it may return `undefined`. Note that if no plugin names a key commmand the `Editor` component will fall back to `Draft.getDefaultKeyBinding`.
 - `keyCommandListener: function(editorState: EditorState, command: string, keyboardEvent: SyntheticKeyboardEvent): boolean | EditorState` - Function to handle key commands without using a button or overlay component.
 
-**Conversion Options** - Plugins can include options to handle serialization and deserialization of their functionality to and from HTML.
-- `styleToHTML: {[inlineStyleType: string]: MarkupObject}` - Object mapping inline style types to HTML markup for output. A `MarkupObject` is an object of shape `{start, end}`, for example:
-    ```javascript
-    const styleToHTML = {
-        'BOLD': {
+#### Conversion Options
+Plugins can include options to handle serialization and deserialization of their functionality to and from HTML.
+
+**Middleware usage**
+`draft-extend` conversion options are all [middleware functions](http://redux.js.org/docs/advanced/Middleware.html) that allow plugins to transform the result of those that were composed before it. An example plugin leveraging middleware is a block alignment plugin that adds an `align` property to the block's metadata. This plugin should add a `text-align: right` style to any block with the property regardless of block type. Transforming the result of `next(block)` instead of building markup from scratch allows the plugin to only apply the changes it needs to. If middleware functionality is not necessary, any conversion option may omit the higher-order function receiving `next` and merely return `null` or `undefined` to defer the entire result to subsequent plugins.
+```javascript
+const AlignmentPlugin = createPlugin({
+    ...
+    blockToHTML: (next) => (block) => {
+        const result = next(block);
+        if (block.data.align && React.isValidElement(result)) {
+            const style = result.props.style || {};
+            style.textAlign = block.data.align;
+            return React.cloneElement(result, {style});
+        }
+        return result;
+    }
+});
+```
+
+**Options**
+- `styleToHTML: (next: function) => (style: string) => (ReactElement | MarkupObject)` - Function that takes inline style types and returns an empty `ReactElement` (most likely created via JS) or HTML markup for output. A `MarkupObject` is an object of shape `{start, end}`, for example:
+```javascript
+const styleToHTML = (style) => {
+    if (style === 'BOLD') {
+        return {
             start: '<strong>',
             end: '</strong>'
-        }
-    };
-    ```
-    - default: `{}`
-- `blockToHTML: {[blockType: string]: BlockMarkupObject}` - Object mapping block types to HTML markup for output. A `BlockMarkupObject` is identical to `MarkupObject` with the exception of nestable blocks: `ordered-list-item` and `unordered-list-item`. These block types include properties for handling nesting. The default values for `ordered-list-item` are:
-    ```
-    {
-        start: '<li>',
-        end: '</li>',
-        nestStart: '<ol>',
-        nestEnd: '</ol>'
+        };
     }
-    ```
-    - default: `{}`
-- `entityToHTML: function(entity: RawEntity, originalText: string): string` - Function to transform instances into HTML output. A `RawEntity` is an object of shape `{type: string, mutability: string, data: object}`.
-    - default: `(entity, originalText) => originalText`
-- `htmlToStyle: function(nodeName: string, node: Node, currentStyle: OrderedSet): OrderedSet` - Function that is passed an HTML Node and the current `Immutable.OrderedSet` of inline styles applied. It should return a transformed list of styles to be applied to all children of the node. The function will be invoked on all HTML nodes in the input.
-    - default: `(nodeName, node, currentStyle) => currentStyle`
-- `htmlToBlock: function(nodeName: string, node: Node): string` - Function that inspects a block level HTML Node and can return a custom ContentBlock type to assign to the block. If no custom type should be used it may return nothing.
-    - default: `() => {}`
-- `htmlToEntity: function(nodeName: string, node: Node): string` - Function that inspects an HTML Node and converts it to any Draft.js Entity that should be applied to the contents of the Node. If an Entity should be applied this function should call `Entity.create()` and return the string return value that is the Entity instance's key. If no entity is necessary it may return nothing.
-    - default: `() => {}`
-- `textToEntity: function(text): Array<TextEntityObject>` - Function to convert plain input text to entities. Note that `textToEntity` is invoked with the value of each individual text DOM Node. For example, with input `<div>node one<span>node two</span></div>` `textToEntity` will be called with strings `'node one'` and `'node two'`. This function generally uses a regular expression to return an array of as many `TextEntityObject`s as necessary for the text string. A `TextEntityObject` is an object with properties:
+};
+```
+- `blockToHTML: (next: function) => (block: RawBlock) => (ReactElement | {element: ReactElement, nest?: ReactElement} | BlockMarkupObject)` - Function accepting a raw block object and returning `ReactElement`s or HTML markup for output. If using `ReactElement`s as return values for nestable blocks (`ordered-list-item` and `unordered-list-item`), a `ReactElement` for both the wrapping element and the block being nested may be included in an object of shape `{element, nest}`. A `BlockMarkupObject` is identical to `MarkupObject` with the exception of nestable blocks. These block types include properties for handling nesting. The default values for `ordered-list-item` are:
+```javascript
+{
+    start: '<li>',
+    end: '</li>',
+    nestStart: '<ol>',
+    nestEnd: '</ol>'
+}
+```
+- `entityToHTML: (next: function) => (entity: RawEntity, originalText: string): (ReactElement | MarkupObject | string)` - Function to transform instances into HTML output. A `RawEntity` is an object of shape `{type: string, mutability: string, data: object}`. If the returned `ReactElement` contains no children it will be wrapped around `originalText`. A `MarkupObject` will also be wrapped around `orignalText`.
+- `htmlToStyle: (next: function) => (nodeName: string, node: Node) => OrderedSet` - Function that is passed an HTML Node. It should return a list of styles to be applied to all children of the node. The function will be invoked on all HTML nodes in the input.
+- `htmlToBlock: (next: function) => (nodeName: string, node: Node) => RawBlock | string` - Function that inspects an HTML `Node` and can return data to assign to the block in the shape `{type, data}`. If no data is necessary a block type may be returned as a string. If no custom type should be used it may return `null` or `undefined`.
+- `htmlToEntity: (next: function) => (nodeName: string, node: Node) => ?string` - Function that inspects an HTML Node and converts it to any Draft.js Entity that should be applied to the contents of the Node. If an Entity should be applied this function should call `Entity.create()` and return the string return value that is the Entity instance's key. If no entity is necessary it may return nothing.
+- `textToEntity: (next: function) => (text: string) => Array<TextEntityObject>` - Function to convert plain input text to entities. Note that `textToEntity` is invoked with the value of each individual text DOM Node. For example, with input `<div>node one<span>node two</span></div>` `textToEntity` will be called with strings `'node one'` and `'node two'`. Implementations of this function generally uses a regular expression to return an array of as many `TextEntityObject`s as necessary for the text string. A `TextEntityObject` is an object with properties:
     - `offset: number`: Offset of the entity to add within `text`
     - `length: number`: Length of the entity starting at `offset` within `text`
     - `result: string`: If necessary, a new string to replace the substring in `text` defined by `offset` and `length`. If omitted from the object no replacement will be made.
@@ -166,15 +186,15 @@ A collection of useful functions for building plugins.
 - `camelCaseToHyphen: function(camelCase: string): string` - Converts a camelCased word to a hyphenated-string. Used in `styleObjectToString`.
 - `styleObjectToString: function(styles: object): string` -  Converts a style object (i.e. object passed into the `style` prop of a React component) to a CSS string for use in a `style` HTML attribute. Useful for converting inline style types to HTML while keeping a single source of truth for the style for both `styleMap` and `styleToHTML`.
 - `entityStrategy: function(entityType: string): function(contentBlock, callback)` - factory function to generate decorator strategies to decorate all instances of a given entity type. For example:
-    ```
-        const MyPlugin = createPlugin({
-            ...
-            decorators: {
-                strategy: entityStrategy('myEntity'),
-                component: MyEntityComponent
-            }
-        });
-    ```
+```javascript
+    const MyPlugin = createPlugin({
+        ...
+        decorators: {
+            strategy: entityStrategy('myEntity'),
+            component: MyEntityComponent
+        }
+    });
+```
 - `getEntitySelection: function(editorState: EditorState, entityKey: string): SelectionState` - Returns the selection of an Entity instance in `editorState` with key `entityKey`.
 - `getSelectedInlineStyles: function(editorState): Set` - Returns a `Set` of all inline style types matched by any character in the current selection. Ths acts differently from `EditorState.getCurrentInlineStyle()` when the selection is not collapsed since `getSelectedInlineStyles` will include styles from every character in the selection instead of the single character at the focus index of the selection.
 - `getActiveEntity(editorState: EditorState): ?string` - Returns the key for the Entity that the current selection start is within, if it exists. Returns `undefined` if the selection start is not within an entity range.
