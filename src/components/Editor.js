@@ -6,6 +6,7 @@ import {
   CompositeDecorator,
   getDefaultKeyBinding
 } from 'draft-js';
+import KeyCommandController from './KeyCommandController';
 import OverlayWrapper from './OverlayWrapper';
 
 const propTypes = {
@@ -19,7 +20,9 @@ const propTypes = {
   blockRendererFn: PropTypes.func,
   blockStyleFn: PropTypes.func,
   keyBindingFn: PropTypes.func,
-  keyCommandListeners: PropTypes.arrayOf(PropTypes.func),
+  addKeyCommandListener: PropTypes.func.isRequired,
+  removeKeyCommandListener: PropTypes.func.isRequired,
+  keyCommandListener: PropTypes.func.isRequired,
   handleReturn: PropTypes.func,
   onEscape: PropTypes.func,
   onTab: PropTypes.func,
@@ -28,7 +31,7 @@ const propTypes = {
   readOnly: PropTypes.bool
 };
 
-export default React.createClass({
+const EditorWrapper = React.createClass({
   propTypes,
 
   childContextTypes: {
@@ -52,7 +55,6 @@ export default React.createClass({
       blockRendererFn: () => {},
       blockStyleFn: () => {},
       keyBindingFn: () => {},
-      keyCommandListeners: [],
       readOnly: false
     };
   },
@@ -93,16 +95,6 @@ export default React.createClass({
     this.setState({decorator: new CompositeDecorator(nextProps.decorators)});
   },
 
-  addKeyCommandListener(listener) {
-    this.keyCommandListeners = this.keyCommandListeners.unshift(listener);
-  },
-
-  removeKeyCommandListener(listener) {
-    this.keyCommandListeners = this.keyCommandListeners.filterNot((l) => {
-      return l === listener;
-    });
-  },
-
   keyBindingFn(e) {
     const pluginsCommand = this.props.keyBindingFn(e);
     if (pluginsCommand) {
@@ -112,61 +104,24 @@ export default React.createClass({
     return getDefaultKeyBinding(e);
   },
 
-  handleKeyCommand(command, keyboardEvent = null) {
-    const decoratedState = this.getDecoratedState();
-
-    const result = this.keyCommandListeners.reduce(({state, hasChanged}, listener) => {
-      if (hasChanged === true) {
-        return {
-          state,
-          hasChanged
-        };
-      }
-
-      const listenerResult = listener(state, command, keyboardEvent);
-      const isEditorState = listenerResult instanceof EditorState;
-
-      if (listenerResult === true || (isEditorState && listenerResult !== state)) {
-        if (isEditorState) {
-          this.props.onChange(listenerResult);
-          return {
-            state: listenerResult,
-            hasChanged: true
-          };
-        }
-        return {
-          state,
-          hasChanged: true
-        };
-      }
-
-      return {
-        state,
-        hasChanged
-      };
-    }, {state: decoratedState, hasChanged: false});
-
-    return result.hasChanged;
-  },
-
   handleReturn(e) {
-    return (this.props.handleReturn && this.props.handleReturn(e)) || this.handleKeyCommand('return', e);
+    return (this.props.handleReturn && this.props.handleReturn(e)) || this.props.handleKeyCommand('return', e);
   },
 
   onEscape(e) {
-    return (this.props.onEscape && this.props.onEscape(e)) || this.handleKeyCommand('escape', e);
+    return (this.props.onEscape && this.props.onEscape(e)) || this.props.handleKeyCommand('escape', e);
   },
 
   onTab(e) {
-    return (this.props.onTab && this.props.onTab(e)) || this.handleKeyCommand('tab', e);
+    return (this.props.onTab && this.props.onTab(e)) || this.props.handleKeyCommand('tab', e);
   },
 
   onUpArrow(e) {
-    return (this.props.onUpArrow && this.props.onUpArrow(e)) || this.handleKeyCommand('up-arrow', e);
+    return (this.props.onUpArrow && this.props.onUpArrow(e)) || this.props.handleKeyCommand('up-arrow', e);
   },
 
   onDownArrow(e) {
-    return (this.props.onDownArrow && this.props.onDownArrow(e)) || this.handleKeyCommand('down-arrow', e);
+    return (this.props.onDownArrow && this.props.onDownArrow(e)) || this.props.handleKeyCommand('down-arrow', e);
   },
 
   focus() {
@@ -213,23 +168,35 @@ export default React.createClass({
   },
 
   renderPluginButtons() {
+    const {
+      onChange,
+      addKeyCommandListener,
+      removeKeyCommandListener
+    } = this.props;
+
     const decoratedState = this.getDecoratedState();
 
     return this.props.buttons.map((Button, index) => {
       return (
         <Button
           {...this.getOtherProps()}
-          addKeyCommandListener={this.addKeyCommandListener}
           editorState={decoratedState}
-          key={`button${index}`}
-          onChange={this.props.onChange}
-          removeKeyCommandListener={this.removeKeyCommandListener}
+          onChange={onChange}
+          addKeyCommandListener={addKeyCommandListener}
+          removeKeyCommandListener={removeKeyCommandListener}
+          addKeyCommandListener={this.addKeyCommandListener}
         />
       );
     });
   },
 
   renderOverlays() {
+    const {
+      onChange,
+      addKeyCommandListener,
+      removeKeyCommandListener
+    } = this.props;
+
     const decoratedState = this.getDecoratedState();
 
     return this.props.overlays.map((Overlay, index) => {
@@ -238,9 +205,9 @@ export default React.createClass({
           <Overlay
             {...this.getOtherProps()}
             editorState={decoratedState}
-            onChange={this.props.onChange}
-            addKeyCommandListener={this.addKeyCommandListener}
-            removeKeyCommandListener={this.removeKeyCommandListener}
+            onChange={onChange}
+            addKeyCommandListener={addKeyCommandListener}
+            removeKeyCommandListener={removeKeyCommandListener}
           />
         </OverlayWrapper>
       );
@@ -253,6 +220,7 @@ export default React.createClass({
       blockRendererFn,
       blockStyleFn,
       onChange,
+      handleKeyCommand,
       ...otherProps
     } = this.props;
 
@@ -273,8 +241,8 @@ export default React.createClass({
             blockStyleFn={blockStyleFn}
             blockRendererFn={blockRendererFn}
             customStyleMap={styleMap}
+            handleKeyCommand={handleKeyCommand}
             keyBindingFn={this.keyBindingFn}
-            handleKeyCommand={this.handleKeyCommand}
             handleReturn={this.handleReturn}
             onEscape={this.onEscape}
             onTab={this.onTab}
@@ -292,3 +260,5 @@ export default React.createClass({
     );
   }
 });
+
+export default KeyCommandController(EditorWrapper);
