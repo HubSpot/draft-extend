@@ -12,6 +12,22 @@ const Toolbar = React.createClass({
     removeKeyCommandListener: PropTypes.func.isRequired
   },
 
+  childContextTypes: {
+    getEditorState: PropTypes.func,
+    onChange: PropTypes.func
+  },
+
+  getChildContext() {
+    return {
+      getEditorState: this.getEditorState,
+      onChange: this.props.onChange
+    };
+  },
+
+  getEditorState() {
+    return this.props.editorState;
+  },
+
   renderButtons() {
     const {
       editorState,
