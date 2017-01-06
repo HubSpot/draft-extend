@@ -1,5 +1,3 @@
-'use es6';
-
 import {List} from 'immutable';
 import React, {PropTypes} from 'react';
 import {EditorState} from 'draft-js';
