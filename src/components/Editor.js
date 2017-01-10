@@ -184,7 +184,6 @@ const EditorWrapper = React.createClass({
           onChange={onChange}
           addKeyCommandListener={addKeyCommandListener}
           removeKeyCommandListener={removeKeyCommandListener}
-          addKeyCommandListener={this.addKeyCommandListener}
         />
       );
     });
