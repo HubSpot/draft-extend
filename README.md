@@ -139,7 +139,7 @@ const Parent = ({editorState, onChange, handleKeyCommand, addKeyCommandListener,
         addKeyCommandListener={addKeyCommandListener}
         removeKeyCommandListener={removeKeyCommandListener}
       />
-      <Toolbar
+      <WrappedToolbar
         editorState={editorState}
         onChange={onChange}
         addKeyCommandListener={addKeyCommandListener}
