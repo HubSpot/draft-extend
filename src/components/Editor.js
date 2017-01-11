@@ -22,7 +22,6 @@ const propTypes = {
   keyBindingFn: PropTypes.func,
   addKeyCommandListener: PropTypes.func.isRequired,
   removeKeyCommandListener: PropTypes.func.isRequired,
-  keyCommandListener: PropTypes.func.isRequired,
   handleReturn: PropTypes.func,
   onEscape: PropTypes.func,
   onTab: PropTypes.func,
@@ -76,10 +75,6 @@ const EditorWrapper = React.createClass({
       focus: this.focus,
       blur: this.blur
     };
-  },
-
-  componentWillMount() {
-    this.keyCommandListeners = List(this.props.keyCommandListeners);
   },
 
   componentWillReceiveProps(nextProps) {

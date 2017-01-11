@@ -1,19 +1,59 @@
+import invariant from 'invariant';
 import {List} from 'immutable';
 import React, {PropTypes} from 'react';
 import {EditorState} from 'draft-js';
 
-export default (Component) => React.createClass({
+const providedProps = {
+  addKeyCommandListener: PropTypes.func,
+  removeKeyCommandListener: PropTypes.func,
+  handleKeyCommand: PropTypes.func
+};
+
+const KeyCommandController = (Component) => React.createClass({
+  displayName: `KeyCommandController(${Component.displayName})`,
+
   propTypes: {
     editorState: PropTypes.object,
     onChange: PropTypes.func,
     keyCommandListeners: PropTypes.arrayOf(PropTypes.func),
-    addKeyCommandListener: PropTypes.func,
-    removeKeyCommandListener: PropTypes.func,
-    handleKeyCommand: PropTypes.func
+    ...providedProps
+  },
+
+  getDefaultProps() {
+    return {
+      keyCommandListeners: []
+    };
   },
 
   componentWillMount() {
     this.keyCommandListeners = List(this.props.keyCommandListeners);
+  },
+
+  componentDidMount() {
+    // ensure valid props for deferral
+    const propNames = Object.keys(providedProps);
+    const presentProps = propNames.filter((propName) => this.props[propName] !== undefined);
+    const nonePresent = presentProps.length === 0;
+    const allPresent = presentProps.length === propNames.length;
+
+    invariant(
+      nonePresent || allPresent,
+      `KeyCommandController: A KeyCommandController is receiving only some props (${presentProps.join(', ')}) necessary to defer to a parent key command controller.`
+    );
+
+    if (allPresent) {
+      this.props.keyCommandListeners.forEach((listener) => {
+        this.props.addKeyCommandListener(listener);
+      });
+    }
+  },
+
+  componentWillUnmount() {
+    if (this.props.removeKeyCommandListener) {
+      this.props.keyCommandListeners.forEach((listener) => {
+        this.props.removeKeyCommandListener(listener);
+      });
+    }
   },
 
   addKeyCommandListener(listener) {
@@ -109,3 +149,5 @@ export default (Component) => React.createClass({
     );
   }
 });
+
+export default KeyCommandController;
