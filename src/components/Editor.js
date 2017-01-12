@@ -27,7 +27,8 @@ const propTypes = {
   onTab: PropTypes.func,
   onUpArrow: PropTypes.func,
   onDownArrow: PropTypes.func,
-  readOnly: PropTypes.bool
+  readOnly: PropTypes.bool,
+  showButtons: PropTypes.bool
 };
 
 const EditorWrapper = React.createClass({
@@ -54,7 +55,8 @@ const EditorWrapper = React.createClass({
       blockRendererFn: () => {},
       blockStyleFn: () => {},
       keyBindingFn: () => {},
-      readOnly: false
+      readOnly: false,
+      showButtons: true
     };
   },
 
@@ -166,8 +168,13 @@ const EditorWrapper = React.createClass({
     const {
       onChange,
       addKeyCommandListener,
-      removeKeyCommandListener
+      removeKeyCommandListener,
+      showButtons
     } = this.props;
+
+    if (showButtons === false) {
+      return null;
+    }
 
     const decoratedState = this.getDecoratedState();
 
@@ -176,6 +183,7 @@ const EditorWrapper = React.createClass({
         <Button
           {...this.getOtherProps()}
           key={`button-${index}`}
+          attachedToEditor={true}
           editorState={decoratedState}
           onChange={onChange}
           addKeyCommandListener={addKeyCommandListener}
