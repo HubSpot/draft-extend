@@ -175,6 +175,7 @@ const EditorWrapper = React.createClass({
       return (
         <Button
           {...this.getOtherProps()}
+          key={`button-${index}`}
           editorState={decoratedState}
           onChange={onChange}
           addKeyCommandListener={addKeyCommandListener}
