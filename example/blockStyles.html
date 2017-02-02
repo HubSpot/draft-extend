@@ -33,6 +33,8 @@
 
       const {
         Editor,
+        Toolbar,
+        KeyCommandController,
         createPlugin
       } = window.DraftExtend;
 
@@ -88,6 +90,7 @@
       });
 
       const WithPlugin = BlockPlugin(Editor);
+      const WithPluginToolbar = BlockPlugin(Toolbar);
       const toHTML = BlockPlugin(convertToHTML);
       const fromHTML = BlockPlugin(convertFromHTML);
 
@@ -107,16 +110,26 @@
 
         render() {
           return (
-            <WithPlugin
-              editorState={this.state.editorState}
-              onChange={this.onChange}
-            />
+            <div>
+              <WithPlugin
+                {...this.props}
+                editorState={this.state.editorState}
+                onChange={this.onChange}
+              />
+              <WithPluginToolbar
+                {...this.props}
+                editorState={this.state.editorState}
+                onChange={this.onChange}
+              />
+            </div>
           );
         }
       });
 
+      const WrappedComponent = KeyCommandController(BlockStylesExample);
+
       ReactDOM.render(
-        <BlockStylesExample />,
+        <WrappedComponent />,
         document.getElementById('target')
       );
     </script>

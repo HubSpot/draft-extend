@@ -110,3 +110,48 @@ const EditorWithPlugins = plugins(Editor);
 const toHTML = plugins(convertToHTML);
 const fromHTML = plugins(convertFromHTML);
 ```
+
+***
+
+## KeyCommandController
+**Higher-order component to consolidate key command listeners across the component tree**
+
+An increasingly common pattern for rich text editors is a toolbar detached from the main `Editor` component. This toolbar will be outside of the `Editor` component subtree, but will often need to respond to key commands that would otherwise be encapsulated by the `Editor`. `KeyCommandController` is a higher-order component that allows the subscription to key commands to move up the React tree so that components outside that subtree may listen and emit changes to editor state. `KeyCommandController`. It may be used with any component, but a good example is the `Toolbar` component:
+
+```javascript
+import {Editor, Toolbar, KeyCommandController, compose} from 'draft-extend';
+
+const plugins = compose(
+  FirstPlugin,
+  SecondPlugin
+);
+
+const WrappedEditor = plugins(Editor);
+const WrappedToolbar = plugins(Toolbar);
+
+const Parent = ({editorState, onChange, handleKeyCommand, addKeyCommandListener, removeKeyCommandListener}) => {
+  return (
+    <div>
+      <WrappedEditor
+        editorState={editorState}
+        onChange={onChange}
+        handleKeyCommand={handleKeyCommand}
+        addKeyCommandListener={addKeyCommandListener}
+        removeKeyCommandListener={removeKeyCommandListener}
+      />
+      <WrappedToolbar
+        editorState={editorState}
+        onChange={onChange}
+        addKeyCommandListener={addKeyCommandListener}
+        removeKeyCommandListener={removeKeyCommandListener}
+      />
+    </div>
+  );
+};
+
+export default KeyCommandController(Parent);
+```
+
+`KeyCommandController` provides the final `handleKeyCommand` to use in the `Editor` component as well as subscribe/unsubscribe functions. As long as these props are passed from some common parent wrapped with `KeyCommandController` that also receives `editorState` and `onChange` props, other components may subscribe and emit chagnes to the editor state.
+
+Additionally, `KeyCommandController`s are composable and will defer to the highest parent instance. That is, if a `KeyCommandController` receives `handleKeyCommand`, `addKeyCommandListener`, and `removeKeyCommandListener` props (presumably from another controller) it will delegate to that controller's record of subscribed functions, keeping all listeners in one place.

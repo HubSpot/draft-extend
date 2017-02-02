@@ -111,6 +111,7 @@
             <WithPlugin
               editorState={this.state.editorState}
               onChange={this.onChange}
+              keyCommandListeners={[Draft.RichUtils.handleKeyCommand]}
             />
           );
         }
