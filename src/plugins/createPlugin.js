@@ -87,6 +87,12 @@ const createPlugin = ({
         }
       },
 
+      getEditor() {
+        if (this.refs.child.getEditor) {
+          return this.refs.child.getEditor();
+        }
+      },
+
       render() {
         const newStyleMap = memoizedAssign(this.props.styleMap, styleMap);
         const newDecorators = memoizedConcat(this.props.decorators, decorators);

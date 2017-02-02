@@ -129,6 +129,10 @@ const EditorWrapper = React.createClass({
     this.refs.editor.blur();
   },
 
+  getEditor() {
+    return this;
+  },
+
   getOtherProps() {
     const propKeys = Object.keys(this.props);
     const propTypeKeys = Object.keys(propTypes);
