@@ -1,4 +1,7 @@
 # draft-extend
+
+[![npm version](https://badge.fury.io/js/draft-extend.svg)](https://www.npmjs.com/package/draft-extend) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 *Build extensible [Draft.js](http://draftjs.org) editors with configurable plugins and integrated serialization*
 
 ***
