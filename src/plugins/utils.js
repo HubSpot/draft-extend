@@ -156,5 +156,11 @@ export default {
       return entity && entity.type === entityType;
     }
     return false;
+  },
+
+  focusEditor(editorState) {
+    const selection = editorState.getSelection();
+    const focusedSelection = selection.set('hasFocus', true);
+    return EditorState.forceSelection(editorState, focusedSelection);
   }
 };
