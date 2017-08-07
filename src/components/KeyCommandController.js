@@ -86,7 +86,7 @@ const KeyCommandController = (Component) => React.createClass({
       return handleKeyCommand(command, keyboardEvent);
     }
 
-    const result = this.keyCommandOverrides.concat(this.keyCommandListeners).reduce(({state, hasChanged}, listener) => {
+    const result = this.keyCommandListeners.concat(this.keyCommandOverrides).reduce(({state, hasChanged}, listener) => {
       if (hasChanged === true) {
         return {
           state,
