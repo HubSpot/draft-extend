@@ -23,7 +23,7 @@ export default React.createClass({
 
   renderOverlay() {
     const child = React.Children.only(this.props.children);
-    ReactDOM.render(child, this.state.node);
+    ReactDOM.unstable_renderSubtreeIntoContainer(this, child, this.state.node);
   },
 
   render() {
