@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "immutable": "^3.8.1",
-    "invariant": "^2.2.1"
+    "invariant": "^2.2.1",
+    "prop-types": "^15.6.0"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
