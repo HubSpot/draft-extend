@@ -1,7 +1,8 @@
+import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import invariant from 'invariant';
 import {List} from 'immutable';
-import PropTypes from 'prop-types';
-import React from 'react';
 import {EditorState} from 'draft-js';
 
 const providedProps = {
@@ -10,7 +11,7 @@ const providedProps = {
   handleKeyCommand: PropTypes.func
 };
 
-const KeyCommandController = (Component) => React.createClass({
+const KeyCommandController = (Component) => createReactClass({
   displayName: `KeyCommandController(${Component.displayName})`,
 
   propTypes: {

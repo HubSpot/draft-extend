@@ -1,5 +1,6 @@
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import {List} from 'immutable';
 import {
   Editor,
@@ -32,7 +33,7 @@ const propTypes = {
   showButtons: PropTypes.bool
 };
 
-const EditorWrapper = React.createClass({
+const EditorWrapper = createReactClass({
   propTypes,
 
   childContextTypes: {
