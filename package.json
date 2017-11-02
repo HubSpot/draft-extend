@@ -30,6 +30,7 @@
     "react-dom": ">=15.0.2"
   },
   "dependencies": {
+    "create-react-class": "^15.6.2",
     "immutable": "^3.8.1",
     "invariant": "^2.2.1",
     "prop-types": "^15.6.0"
