@@ -1,4 +1,5 @@
-import React, {PropTypes} from 'react';
+import PropTypes from 'prop-types';
+import React from 'react';
 import {OrderedSet} from 'immutable';
 import memoize from '../util/memoize';
 import compose from '../util/compose';
