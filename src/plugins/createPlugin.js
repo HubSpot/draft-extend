@@ -1,4 +1,6 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import {OrderedSet} from 'immutable';
 import memoize from '../util/memoize';
 import compose from '../util/compose';
@@ -48,7 +50,7 @@ const createPlugin = ({
 
   if (ToWrap.prototype && ToWrap.prototype.isReactComponent) {
     // wrapping an Editor component
-    return React.createClass({
+    return createReactClass({
       displayName,
 
       propTypes: {

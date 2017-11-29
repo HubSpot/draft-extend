@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import createReactClass from 'create-react-class';
 
-export default React.createClass({
+export default createReactClass({
   getInitialState() {
     const node = document.createElement('div');
     document.body.appendChild(node);

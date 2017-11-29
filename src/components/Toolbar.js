@@ -1,7 +1,9 @@
-import React, {PropTypes} from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
+import createReactClass from 'create-react-class';
 import KeyCommandController from './KeyCommandController';
 
-const Toolbar = React.createClass({
+const Toolbar = createReactClass({
   propTypes: {
     editorState: PropTypes.object,
     onChange: PropTypes.func,
