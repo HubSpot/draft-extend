@@ -15,9 +15,10 @@
   </head>
   <body>
     <div id="target"></div>
-    <script src="../node_modules/react/dist/react.min.js"></script>
-    <script src="../node_modules/react-dom/dist/react-dom.min.js"></script>
-    <script src="../node_modules/react-dom/dist/react-dom-server.min.js"></script>
+    <script src="../node_modules/react/umd/react.development.js"></script>
+    <script src="../node_modules/create-react-class/create-react-class.js"></script>
+    <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
+    <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
     <script src="../node_modules/es6-shim/es6-shim.js"></script>
     <script src="../node_modules/babel-standalone/babel.min.js"></script>
@@ -121,7 +122,7 @@
       const toHTML = LinkPlugin(convertToHTML);
       const fromHTML = LinkPlugin(convertFromHTML);
 
-      const LinkExample = React.createClass({
+      const LinkExample = createReactClass({
         getInitialState() {
           return {
             editorState: EditorState.createWithContent(

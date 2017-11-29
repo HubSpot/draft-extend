@@ -15,9 +15,11 @@
   </head>
   <body>
     <div id="target"></div>
-    <script src="../node_modules/react/dist/react.min.js"></script>
-    <script src="../node_modules/react-dom/dist/react-dom.min.js"></script>
-    <script src="../node_modules/react-dom/dist/react-dom-server.min.js"></script>
+    <script src="../node_modules/react/umd/react.development.js"></script>
+    <script src="../node_modules/create-react-class/create-react-class.js"></script>
+    <script src="../node_modules/prop-types/prop-types.js"></script>
+    <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
+    <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
     <script src="../node_modules/es6-shim/es6-shim.js"></script>
     <script src="../node_modules/babel-standalone/babel.min.js"></script>
@@ -26,11 +28,6 @@
     <script src="../node_modules/draft-convert/dist/draft-convert.js"></script>
     <script src="./ToolbarButton.js"></script>
     <script type="text/babel">
-      const {
-        PropTypes
-      } = React;
-
-
       const {
         EditorState,
         Modifier,
@@ -107,7 +104,7 @@
         return results;
       };
 
-      const MentionResults = React.createClass({
+      const MentionResults = createReactClass({
         propTypes: {
           search: PropTypes.string.isRequired,
           offset: PropTypes.number.isRequired,
@@ -276,7 +273,7 @@
 
       const TYPING_TRIGGER_REGEX = new RegExp('(\\B@[\\w\\s]{1,10})$');
 
-      const MentionOverlay = React.createClass({
+      const MentionOverlay = createReactClass({
         propTypes: {
           editorState: PropTypes.object.isRequired,
           onChange: PropTypes.func.isRequired,
@@ -406,7 +403,7 @@
       const toHTML = MentionPlugin(convertToHTML);
       const fromHTML = MentionPlugin(convertFromHTML);
 
-      const MentionExample = React.createClass({
+      const MentionExample = createReactClass({
         getInitialState() {
           return {
             editorState: EditorState.createWithContent(
