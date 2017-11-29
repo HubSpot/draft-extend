@@ -1,4 +1,4 @@
-window.ToolbarButton = React.createClass({
+window.ToolbarButton = createReactClass({
   getDefaultProps: function() {
     return {
       active: false,
