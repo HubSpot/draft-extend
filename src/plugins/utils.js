@@ -24,14 +24,20 @@ export default {
     }).join(' ').replace(/"/g, '\\"');
   },
 
-  entityStrategy: (entityType) => (contentBlock, callback) => {
+  entityStrategy: (entityType) => (contentBlock, callback, contentState) => {
     contentBlock.findEntityRanges(
       (character) => {
         const entityKey = character.getEntity();
-        return (
-          entityKey !== null &&
-          Entity.get(entityKey).getType() === entityType
-        );
+
+        if (entityKey === null) {
+          return false;
+        }
+
+        const entity = contentState && contentState.getEntity
+          ? contentState.getEntity(entityKey)
+          : Entity.get(entityKey);
+
+        return entity && entity.getType() === entityType;
       },
       callback
     );
@@ -151,8 +157,11 @@ export default {
 
   isEntityActive(editorState, entityType) {
     const activeEntityKey = getActiveEntity(editorState);
+    const contentState = editorState.getCurrentContent();
     if (activeEntityKey) {
-      const entity = Entity.get(activeEntityKey);
+      const entity = contentState.getEntity
+        ? contentState.getEntity(activeEntityKey)
+        : Entity.get(activeEntityKey);
       return entity && entity.type === entityType;
     }
     return false;
