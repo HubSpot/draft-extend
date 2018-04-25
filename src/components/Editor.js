@@ -16,6 +16,7 @@ const propTypes = {
   editorState: PropTypes.object,
   onChange: PropTypes.func,
   decorators: PropTypes.array,
+  baseDecorator: PropTypes.func,
   styleMap: PropTypes.object,
   buttons: PropTypes.array,
   overlays: PropTypes.array,
@@ -51,6 +52,7 @@ const EditorWrapper = createReactClass({
       editorState: EditorState.createEmpty(),
       onChange: () => {},
       decorators: [],
+      baseDecorator: CompositeDecorator,
       styleMap: {},
       buttons: [],
       overlays: [],
@@ -63,7 +65,9 @@ const EditorWrapper = createReactClass({
   },
 
   getInitialState() {
-    const decorator = new CompositeDecorator(this.props.decorators);
+    const { baseDecorator } = this.props;
+
+    const decorator = new baseDecorator(this.props.decorators);
     return {
       decorator,
       readOnly: false
@@ -91,7 +95,7 @@ const EditorWrapper = createReactClass({
       }
     }
 
-    this.setState({decorator: new CompositeDecorator(nextProps.decorators)});
+    this.setState({decorator: new nextProps.baseDecorator(nextProps.decorators)});
   },
 
   keyBindingFn(e) {
