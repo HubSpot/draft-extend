@@ -88,6 +88,7 @@ Other props are used by plugins composed around `Editor`. See [Building Plugins]
 - `buttons`: `Array<Component>` Array of React components to add to the controls of the editor.
 - `overlays`: `Array<Component>` Array of React components to add as overlays to the editor.
 - `decorators`: `Array<DraftDecorator>` Array of Draft.js decorator objects used to render the EditorState. They are added to the EditorState as a CompositeDecorator within the component and are of shape `{strategy, component}`.
+- `baseDecorator`: `DraftDecoratorType` Replacement decorator object to override the built-in `CompositeDecorator`'s behavior. See the "Beyond CompositeDecorator" section on [this page of the Draft.js docs](https://draftjs.org/docs/advanced-topics-decorators.html#content) for more information.
 - `styleMap`: `Object` Object map from Draft.js inline style type to style object. Used for the Draft.js Editor's `customStyleMap` prop.
 
 All other props are passed down to the [Draft.js `Editor` component](https://facebook.github.io/draft-js/docs/api-reference-editor.html) and to any buttons and overlays added by plugins.
