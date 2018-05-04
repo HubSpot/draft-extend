@@ -36,18 +36,16 @@ const EditorWithPlugins = plugins(Editor); // Rich text editor component with pl
 const toHTML = plugins(convertFromHTML); // function to convert from HTML including plugin functionality
 const fromHTML = plugins(convertToHTML); // function to convert to HTML including plugin functionality
 
-const MyEditor = React.createClass({
-    getInitialState() {
-        return {
-            editorState: EditorState.createWithContent(fromHTML('<div></div>'))
-        };
-    },
+class MyEditor extends React.Comonent {
+    state = {
+        editorState: EditorState.createWithContent(fromHTML('<div></div>'))
+    }
 
-    onChange(editorState) {
+    onChange = (editorState) => {
         const html = toHTML(editorState.getCurrentContent());
         console.log(html); // don't actually convert to HTML on every change!
         this.setState({editorState});
-    },
+    }
 
     render() {
         return (

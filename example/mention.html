@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/prop-types/prop-types.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
@@ -104,32 +103,20 @@
         return results;
       };
 
-      const MentionResults = createReactClass({
-        propTypes: {
-          search: PropTypes.string.isRequired,
-          offset: PropTypes.number.isRequired,
-          length: PropTypes.number.isRequired,
-          results: PropTypes.array.isRequired,
-          onSelect: PropTypes.func.isRequired,
-          addKeyCommandListener: PropTypes.func.isRequired,
-          removeKeyCommandListener: PropTypes.func.isRequired
-        },
-
-        getInitialState() {
-          return {
-            selection: 0
-          };
-        },
+      class MentionResults extends React.Component {
+        state = {
+          selection: 0
+        }
 
         componentDidMount() {
           this.props.addKeyCommandListener(this.handleKeyCommand);
-        },
+        }
 
         componentWillUnmount() {
           this.props.removeKeyCommandListener(this.handleKeyCommand);
-        },
+        }
 
-        handleKeyCommand(editorState, command, keyboardEvent) {
+        handleKeyCommand = (editorState, command, keyboardEvent) => {
           const {
             search,
             offset,
@@ -163,9 +150,9 @@
             default:
               return null;
           }
-        },
+        }
 
-        arrowUp() {
+        arrowUp = () => {
           const {selection} = this.state;
 
           if (selection > 0) {
@@ -173,9 +160,9 @@
               selection: selection - 1
             });
           }
-        },
+        }
 
-        arrowDown() {
+        arrowDown = () => {
           const {results} = this.props;
           const {selection} = this.state;
 
@@ -184,9 +171,9 @@
               selection: selection + 1
             });
           }
-        },
+        }
 
-        selectItem({value, text}) {
+        selectItem = ({value, text}) => {
           const {
             search,
             offset,
@@ -195,9 +182,9 @@
           } = this.props;
 
           onSelect({value, text}, {search, offset, length});
-        },
+        }
 
-        renderResults() {
+        renderResults = () => {
           const {
             results,
           } = this.props;
@@ -254,7 +241,7 @@
               </li>
             );
           });
-        },
+        }
 
         render() {
           return (
@@ -269,19 +256,22 @@
             </ul>
           );
         }
-      });
+      };
+
+      MentionResults.propTypes = {
+        search: PropTypes.string.isRequired,
+        offset: PropTypes.number.isRequired,
+        length: PropTypes.number.isRequired,
+        results: PropTypes.array.isRequired,
+        onSelect: PropTypes.func.isRequired,
+        addKeyCommandListener: PropTypes.func.isRequired,
+        removeKeyCommandListener: PropTypes.func.isRequired
+      };
 
       const TYPING_TRIGGER_REGEX = new RegExp('(\\B@[\\w\\s]{1,10})$');
 
-      const MentionOverlay = createReactClass({
-        propTypes: {
-          editorState: PropTypes.object.isRequired,
-          onChange: PropTypes.func.isRequired,
-          addKeyCommandListener: PropTypes.func.isRequired,
-          removeKeyCommandListener: PropTypes.func.isRequired
-        },
-
-        getCurrentSearch() {
+      class MentionOverlay extends React.Component {
+        getCurrentSearch = () => {
           const selection = this.props.editorState.getSelection();
           const contentState = this.props.editorState.getCurrentContent();
           const blockText = contentState.getBlockForKey(selection.getStartKey()).getText();
@@ -305,9 +295,9 @@
             offset: offset - beforeCursorText.length - 1,
             length: 1 + beforeCursorText.length + pastCursorText.length
           };
-        },
+        }
 
-        selectOption(option, {offset, length}) {
+        selectOption = (option, {offset, length}) => {
           const {
             editorState,
             onChange
@@ -337,14 +327,14 @@
               'insert-characters'
             )
           );
-        },
+        }
 
-        getResults(search) {
+        getResults = (search) => {
           const regex = new RegExp(search.trim(), 'i');
           return this.props.users.filter(({value, text}) => {
             return (text.match(regex) !== null || value.toString().match(regex) !== null);
           });
-        },
+        }
 
         render() {
           const {
@@ -360,7 +350,7 @@
               top,
               left,
               height
-            } = getVisibleSelectionRect(window);
+            } = getVisibleSelectionRect(window) || {};
 
             const results = this.getResults(currentSearch.search);
 
@@ -390,7 +380,14 @@
 
           return null;
         }
-      });
+      };
+
+      MentionOverlay.propTypes = {
+        editorState: PropTypes.object.isRequired,
+        onChange: PropTypes.func.isRequired,
+        addKeyCommandListener: PropTypes.func.isRequired,
+        removeKeyCommandListener: PropTypes.func.isRequired
+      };
 
       const MentionPlugin = createPlugin({
         decorators: MentionDecorator,
@@ -403,19 +400,17 @@
       const toHTML = MentionPlugin(convertToHTML);
       const fromHTML = MentionPlugin(convertFromHTML);
 
-      const MentionExample = createReactClass({
-        getInitialState() {
-          return {
-            editorState: EditorState.createWithContent(
-              fromHTML('<div>Mention example @user1. Type @ to add a new mention for User 1 or User 2</div>')
-            )
-          };
-        },
+      class MentionExample extends React.Component {
+        state = {
+          editorState: EditorState.createWithContent(
+            fromHTML('<div>Mention example @user1. Type @ to add a new mention for User 1 or User 2</div>')
+          )
+        }
 
-        onChange(editorState) {
+        onChange = (editorState) => {
           console.log(toHTML(editorState.getCurrentContent()));
           this.setState({editorState});
-        },
+        }
 
         render() {
           return (
@@ -426,7 +421,7 @@
             />
           );
         }
-      });
+      };
 
       ReactDOM.render(
         <MentionExample />,
@@ -434,6 +429,6 @@
       );
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react', 'stage-2']}).code)
     </script>
   </body>
