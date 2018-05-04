@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
@@ -93,19 +92,17 @@
       const toHTML = InlinePlugin(convertToHTML);
       const fromHTML = InlinePlugin(convertFromHTML);
 
-      const InlineStylesExample = createReactClass({
-        getInitialState() {
-          return {
-            editorState: EditorState.createWithContent(
-              fromHTML('<div><strong>Inline</strong> styles <em>example</em></div>')
-            )
-          };
-        },
+      class InlineStylesExample extends React.Component {
+        state = {
+          editorState: EditorState.createWithContent(
+            fromHTML('<div><strong>Inline</strong> styles <em>example</em></div>')
+          )
+        }
 
-        onChange(editorState) {
+        onChange = (editorState) => {
           console.log(toHTML(editorState.getCurrentContent()));
           this.setState({editorState});
-        },
+        }
 
         render() {
           return (
@@ -116,7 +113,7 @@
             />
           );
         }
-      });
+      };
 
       ReactDOM.render(
         <InlineStylesExample />,
@@ -124,6 +121,6 @@
       );
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react', 'stage-2']}).code)
     </script>
   </body>

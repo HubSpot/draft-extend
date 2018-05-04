@@ -1,13 +1,5 @@
-window.ToolbarButton = createReactClass({
-  getDefaultProps: function() {
-    return {
-      active: false,
-      label: '',
-      onClick: function() {}
-    };
-  },
-
-  render: function() {
+class ToolbarButton extends React.Component {
+  render () {
     var toolbarButtonStyle = {
       display: 'inline-block',
       minWidth: '24px',
@@ -29,4 +21,12 @@ window.ToolbarButton = createReactClass({
       }, this.props.label)
     );
   }
-});
+};
+
+ToolbarButton.defaultProps = {
+  active: false,
+  label: '',
+  onClick: function() {}
+};
+
+window.ToolbarButton = ToolbarButton;

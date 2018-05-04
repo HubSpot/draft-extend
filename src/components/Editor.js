@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import {List} from 'immutable';
 import {
   Editor,
@@ -11,68 +10,15 @@ import {
 import KeyCommandController from './KeyCommandController';
 import OverlayWrapper from './OverlayWrapper';
 
-const propTypes = {
-  className: PropTypes.string,
-  editorState: PropTypes.object,
-  onChange: PropTypes.func,
-  decorators: PropTypes.array,
-  baseDecorator: PropTypes.func,
-  styleMap: PropTypes.object,
-  buttons: PropTypes.array,
-  overlays: PropTypes.array,
-  blockRendererFn: PropTypes.func,
-  blockStyleFn: PropTypes.func,
-  keyBindingFn: PropTypes.func,
-  addKeyCommandListener: PropTypes.func.isRequired,
-  removeKeyCommandListener: PropTypes.func.isRequired,
-  handleReturn: PropTypes.func,
-  onEscape: PropTypes.func,
-  onTab: PropTypes.func,
-  onUpArrow: PropTypes.func,
-  onDownArrow: PropTypes.func,
-  readOnly: PropTypes.bool,
-  showButtons: PropTypes.bool
-};
-
-const EditorWrapper = createReactClass({
-  propTypes,
-
-  childContextTypes: {
-    getEditorState: PropTypes.func,
-    getReadOnly: PropTypes.func,
-    setReadOnly: PropTypes.func,
-    onChange: PropTypes.func,
-    focus: PropTypes.func,
-    blur: PropTypes.func
-  },
-
-  getDefaultProps() {
-    return {
-      className: '',
-      editorState: EditorState.createEmpty(),
-      onChange: () => {},
-      decorators: [],
-      baseDecorator: CompositeDecorator,
-      styleMap: {},
-      buttons: [],
-      overlays: [],
-      blockRendererFn: () => {},
-      blockStyleFn: () => {},
-      keyBindingFn: () => {},
-      readOnly: false,
-      showButtons: true
-    };
-  },
-
-  getInitialState() {
+class EditorWrapper extends React.Component {
+  constructor(props) {
+    super(props);
     const { baseDecorator } = this.props;
-
-    const decorator = new baseDecorator(this.props.decorators);
-    return {
-      decorator,
+    this.state = {
+      decorator: new baseDecorator(this.props.decorators),
       readOnly: false
     };
-  },
+  }
 
   getChildContext() {
     return {
@@ -83,7 +29,7 @@ const EditorWrapper = createReactClass({
       focus: this.focus,
       blur: this.blur
     };
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.decorators.length === this.state.decorator._decorators.length) {
@@ -96,48 +42,48 @@ const EditorWrapper = createReactClass({
     }
 
     this.setState({decorator: new nextProps.baseDecorator(nextProps.decorators)});
-  },
+  }
 
-  keyBindingFn(e) {
+  keyBindingFn = (e) => {
     const pluginsCommand = this.props.keyBindingFn(e);
     if (pluginsCommand) {
       return pluginsCommand;
     }
 
     return getDefaultKeyBinding(e);
-  },
+  }
 
-  handleReturn(e) {
+  handleReturn = (e) => {
     return (this.props.handleReturn && this.props.handleReturn(e)) || this.props.handleKeyCommand('return', e);
-  },
+  }
 
-  onEscape(e) {
+  onEscape = (e) => {
     return (this.props.onEscape && this.props.onEscape(e)) || this.props.handleKeyCommand('escape', e);
-  },
+  }
 
-  onTab(e) {
+  onTab = (e) => {
     return (this.props.onTab && this.props.onTab(e)) || this.props.handleKeyCommand('tab', e);
-  },
+  }
 
-  onUpArrow(e) {
+  onUpArrow = (e) => {
     return (this.props.onUpArrow && this.props.onUpArrow(e)) || this.props.handleKeyCommand('up-arrow', e);
-  },
+  }
 
-  onDownArrow(e) {
+  onDownArrow = (e) => {
     return (this.props.onDownArrow && this.props.onDownArrow(e)) || this.props.handleKeyCommand('down-arrow', e);
-  },
+  }
 
-  focus() {
+  focus = () => {
     this.refs.editor.focus();
-  },
+  }
 
-  blur() {
+  blur = () => {
     this.refs.editor.blur();
-  },
+  }
 
-  getOtherProps() {
+  getOtherProps = () => {
     const propKeys = Object.keys(this.props);
-    const propTypeKeys = Object.keys(propTypes);
+    const propTypeKeys = Object.keys(EditorWrapper.propTypes);
 
     const propsToPass = propKeys.filter((prop) => {
       return propTypeKeys.indexOf(prop) === -1;
@@ -147,17 +93,17 @@ const EditorWrapper = createReactClass({
       acc[prop] = this.props[prop];
       return acc;
     }, {});
-  },
+  }
 
-  getReadOnly() {
+  getReadOnly = () => {
     return this.state.readOnly || this.props.readOnly;
-  },
+  }
 
-  setReadOnly(readOnly) {
+  setReadOnly = (readOnly) => {
     this.setState({readOnly});
-  },
+  }
 
-  getDecoratedState() {
+  getDecoratedState = () => {
     const {editorState} = this.props;
     const {decorator} = this.state;
 
@@ -168,9 +114,9 @@ const EditorWrapper = createReactClass({
     }
 
     return EditorState.set(editorState, {decorator});
-  },
+  }
 
-  renderPluginButtons() {
+  renderPluginButtons = () => {
     const {
       onChange,
       addKeyCommandListener,
@@ -197,9 +143,9 @@ const EditorWrapper = createReactClass({
         />
       );
     });
-  },
+  }
 
-  renderOverlays() {
+  renderOverlays = () => {
     const {
       onChange,
       addKeyCommandListener,
@@ -221,7 +167,7 @@ const EditorWrapper = createReactClass({
         </OverlayWrapper>
       );
     });
-  },
+  }
 
   render() {
     const {
@@ -268,6 +214,54 @@ const EditorWrapper = createReactClass({
       </div>
     );
   }
-});
+};
+
+EditorWrapper.childContextTypes = {
+  getEditorState: PropTypes.func,
+  getReadOnly: PropTypes.func,
+  setReadOnly: PropTypes.func,
+  onChange: PropTypes.func,
+  focus: PropTypes.func,
+  blur: PropTypes.func
+};
+
+EditorWrapper.defaultProps = {
+  className: '',
+  editorState: EditorState.createEmpty(),
+  onChange: () => {},
+  decorators: [],
+  baseDecorator: CompositeDecorator,
+  styleMap: {},
+  buttons: [],
+  overlays: [],
+  blockRendererFn: () => {},
+  blockStyleFn: () => {},
+  keyBindingFn: () => {},
+  readOnly: false,
+  showButtons: true
+};
+
+EditorWrapper.propTypes = {
+  className: PropTypes.string,
+  editorState: PropTypes.object,
+  onChange: PropTypes.func,
+  decorators: PropTypes.array,
+  baseDecorator: PropTypes.func,
+  styleMap: PropTypes.object,
+  buttons: PropTypes.array,
+  overlays: PropTypes.array,
+  blockRendererFn: PropTypes.func,
+  blockStyleFn: PropTypes.func,
+  keyBindingFn: PropTypes.func,
+  addKeyCommandListener: PropTypes.func.isRequired,
+  removeKeyCommandListener: PropTypes.func.isRequired,
+  handleReturn: PropTypes.func,
+  onEscape: PropTypes.func,
+  onTab: PropTypes.func,
+  onUpArrow: PropTypes.func,
+  onDownArrow: PropTypes.func,
+  readOnly: PropTypes.bool,
+  showButtons: PropTypes.bool
+};
 
 export default KeyCommandController(EditorWrapper);

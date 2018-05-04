@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
@@ -126,19 +125,17 @@
       const toHTML = TokenPlugin(convertToHTML);
       const fromHTML = TokenPlugin(convertFromHTML);
 
-      const TokenExample = createReactClass({
-        getInitialState() {
-          return {
-            editorState: EditorState.createWithContent(
-              fromHTML('<div>Token example {{ token }}</div>')
-            )
-          };
-        },
+      class TokenExample extends React.Component {
+        state ={
+          editorState: EditorState.createWithContent(
+            fromHTML('<div>Token example {{ token }}</div>')
+          )
+        }
 
-        onChange(editorState) {
+        onChange = (editorState) => {
           console.log(toHTML(editorState.getCurrentContent()));
           this.setState({editorState});
-        },
+        }
 
         render() {
           return (
@@ -148,7 +145,7 @@
             />
           );
         }
-      });
+      };
 
       ReactDOM.render(
         <TokenExample />,
@@ -156,6 +153,6 @@
       );
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react', 'stage-2']}).code)
     </script>
   </body>

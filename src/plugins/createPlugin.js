@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import {OrderedSet} from 'immutable';
 import memoize from '../util/memoize';
 import compose from '../util/compose';
@@ -50,44 +49,18 @@ const createPlugin = ({
 
   if (ToWrap.prototype && ToWrap.prototype.isReactComponent) {
     // wrapping an Editor component
-    return createReactClass({
-      displayName,
-
-      propTypes: {
-        styleMap: PropTypes.object,
-        decorators: PropTypes.array,
-        buttons: PropTypes.array,
-        overlays: PropTypes.array,
-        blockRendererFn: PropTypes.func,
-        blockStyleFn: PropTypes.func,
-        keyBindingFn: PropTypes.func,
-        keyCommandListeners: PropTypes.arrayOf(PropTypes.func)
-      },
-
-      getDefaultProps() {
-        return {
-          styleMap: emptyObject,
-          decorators: emptyArray,
-          buttons: emptyArray,
-          overlays: emptyArray,
-          blockRendererFn: emptyFunction,
-          blockStyleFn: emptyFunction,
-          keyBindingFn: emptyFunction,
-          keyCommandListeners: emptyArray
-        };
-      },
-
-      focus() {
+    class Wrapper extends React.Component {
+      focus = () => {
         if (this.refs.child.focus) {
           this.refs.child.focus();
         }
-      },
+      }
 
-      blur() {
+      blur = () => {
         if (this.refs.child.blur) {
           this.refs.child.blur();
         }
-      },
+      }
 
       render() {
         const newStyleMap = memoizedAssign(this.props.styleMap, styleMap);
@@ -114,7 +87,33 @@ const createPlugin = ({
           />
         );
       }
-    });
+    };
+
+    Wrapper.displayName = displayName;
+
+    Wrapper.propTypes = {
+      styleMap: PropTypes.object,
+      decorators: PropTypes.array,
+      buttons: PropTypes.array,
+      overlays: PropTypes.array,
+      blockRendererFn: PropTypes.func,
+      blockStyleFn: PropTypes.func,
+      keyBindingFn: PropTypes.func,
+      keyCommandListeners: PropTypes.arrayOf(PropTypes.func)
+    };
+
+    Wrapper.defaultProps = {
+      styleMap: emptyObject,
+      decorators: emptyArray,
+      buttons: emptyArray,
+      overlays: emptyArray,
+      blockRendererFn: emptyFunction,
+      blockStyleFn: emptyFunction,
+      keyBindingFn: emptyFunction,
+      keyCommandListeners: emptyArray
+    };
+
+    return Wrapper;
   } else {
     // wrapping a converter function
     return (...args) => {

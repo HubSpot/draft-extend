@@ -1,32 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import KeyCommandController from './KeyCommandController';
 
-const Toolbar = createReactClass({
-  propTypes: {
-    editorState: PropTypes.object,
-    onChange: PropTypes.func,
-    buttons: PropTypes.array,
-    addKeyCommandListener: PropTypes.func.isRequired,
-    removeKeyCommandListener: PropTypes.func.isRequired
-  },
-
-  childContextTypes: {
-    getEditorState: PropTypes.func,
-    onChange: PropTypes.func
-  },
-
+class Toolbar extends React.Component {
   getChildContext() {
     return {
       getEditorState: this.getEditorState,
       onChange: this.props.onChange
     };
-  },
+  }
 
   getEditorState() {
     return this.props.editorState;
-  },
+  }
 
   renderButtons() {
     const {
@@ -50,7 +36,7 @@ const Toolbar = createReactClass({
         />
       );
     });
-  },
+  }
 
   render() {
     return (
@@ -59,6 +45,19 @@ const Toolbar = createReactClass({
       </ul>
     );
   }
-});
+};
+
+Toolbar.propTypes = {
+  editorState: PropTypes.object,
+  onChange: PropTypes.func,
+  buttons: PropTypes.array,
+  addKeyCommandListener: PropTypes.func.isRequired,
+  removeKeyCommandListener: PropTypes.func.isRequired
+};
+
+Toolbar.childContextTypes = {
+  getEditorState: PropTypes.func,
+  onChange: PropTypes.func
+};
 
 export default KeyCommandController(Toolbar);
