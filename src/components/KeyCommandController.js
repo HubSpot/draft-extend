@@ -81,7 +81,7 @@ const KeyCommandController = (Component) => createReactClass({
     this.keyCommandListeners = this.keyCommandListeners.filterNot((l) => l === listener);
   },
 
-  handleKeyCommand(command, keyboardEvent = null) {
+  handleKeyCommand(command, __editorState, keyboardEvent = null) {
     const {editorState, onChange, handleKeyCommand} = this.props;
 
     if (handleKeyCommand) {

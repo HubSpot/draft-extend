@@ -108,23 +108,28 @@ const EditorWrapper = createReactClass({
   },
 
   handleReturn(e) {
-    return (this.props.handleReturn && this.props.handleReturn(e)) || this.props.handleKeyCommand('return', e);
+    return (this.props.handleReturn && this.props.handleReturn(e)) ||
+      this.props.handleKeyCommand('return', this.props.editorState, e);
   },
 
   onEscape(e) {
-    return (this.props.onEscape && this.props.onEscape(e)) || this.props.handleKeyCommand('escape', e);
+    return (this.props.onEscape && this.props.onEscape(e)) ||
+      this.props.handleKeyCommand('escape', this.props.editorState, e);
   },
 
   onTab(e) {
-    return (this.props.onTab && this.props.onTab(e)) || this.props.handleKeyCommand('tab', e);
+    return (this.props.onTab && this.props.onTab(e)) ||
+      this.props.handleKeyCommand('tab', this.props.editorState, e);
   },
 
   onUpArrow(e) {
-    return (this.props.onUpArrow && this.props.onUpArrow(e)) || this.props.handleKeyCommand('up-arrow', e);
+    return (this.props.onUpArrow && this.props.onUpArrow(e)) ||
+      this.props.handleKeyCommand('up-arrow', this.props.editorState, e);
   },
 
   onDownArrow(e) {
-    return (this.props.onDownArrow && this.props.onDownArrow(e)) || this.props.handleKeyCommand('down-arrow', e);
+    return (this.props.onDownArrow && this.props.onDownArrow(e)) ||
+      this.props.handleKeyCommand('down-arrow', this.props.editorState, e);
   },
 
   focus() {
