@@ -107,8 +107,8 @@ const EditorWrapper = createReactClass({
     return getDefaultKeyBinding(e);
   },
 
-  handleReturn(e) {
-    return (this.props.handleReturn && this.props.handleReturn(e)) || this.props.handleKeyCommand('return', e);
+  handleReturn(e, editorState) {
+    return (this.props.handleReturn && this.props.handleReturn(e, editorState)) || this.props.handleKeyCommand('return', e);
   },
 
   onEscape(e) {
