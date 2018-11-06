@@ -174,7 +174,7 @@ const EditorWrapper = createReactClass({
     const { renderTray } = this.props;
 
     if (typeof renderTray !== 'function') {
-      return null
+      return null;
     }
 
     return renderTray();
