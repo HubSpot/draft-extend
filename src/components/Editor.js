@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import createReactClass from 'create-react-class';
-import {List} from 'immutable';
 import {
   Editor,
   EditorState,
@@ -31,7 +30,8 @@ const propTypes = {
   onUpArrow: PropTypes.func,
   onDownArrow: PropTypes.func,
   readOnly: PropTypes.bool,
-  showButtons: PropTypes.bool
+  showButtons: PropTypes.bool,
+  renderTray: PropTypes.func,
 };
 
 const EditorWrapper = createReactClass({
@@ -50,15 +50,15 @@ const EditorWrapper = createReactClass({
     return {
       className: '',
       editorState: EditorState.createEmpty(),
-      onChange: () => {},
+      onChange: () => { },
       decorators: [],
       baseDecorator: CompositeDecorator,
       styleMap: {},
       buttons: [],
       overlays: [],
-      blockRendererFn: () => {},
-      blockStyleFn: () => {},
-      keyBindingFn: () => {},
+      blockRendererFn: () => { },
+      blockStyleFn: () => { },
+      keyBindingFn: () => { },
       readOnly: false,
       showButtons: true
     };
@@ -95,7 +95,7 @@ const EditorWrapper = createReactClass({
       }
     }
 
-    this.setState({decorator: new nextProps.baseDecorator(nextProps.decorators)});
+    this.setState({ decorator: new nextProps.baseDecorator(nextProps.decorators) });
   },
 
   keyBindingFn(e) {
@@ -154,12 +154,12 @@ const EditorWrapper = createReactClass({
   },
 
   setReadOnly(readOnly) {
-    this.setState({readOnly});
+    this.setState({ readOnly });
   },
 
   getDecoratedState() {
-    const {editorState} = this.props;
-    const {decorator} = this.state;
+    const { editorState } = this.props;
+    const { decorator } = this.state;
 
     const currentDecorator = editorState.getDecorator();
 
@@ -167,7 +167,17 @@ const EditorWrapper = createReactClass({
       return editorState;
     }
 
-    return EditorState.set(editorState, {decorator});
+    return EditorState.set(editorState, { decorator });
+  },
+
+  renderTray() {
+    const { renderTray } = this.props;
+
+    if (typeof renderTray !== 'function') {
+      return null;
+    }
+
+    return renderTray();
   },
 
   renderPluginButtons() {
@@ -258,6 +268,9 @@ const EditorWrapper = createReactClass({
             onUpArrow={this.onUpArrow}
             onDownArrow={this.onDownArrow}
           />
+          <div className="draft-extend-tray">
+            {this.renderTray()}
+          </div>
           <div className="draft-extend-controls">
             {this.renderPluginButtons()}
           </div>
