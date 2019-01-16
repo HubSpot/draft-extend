@@ -17,6 +17,7 @@ const propTypes = {
   decorators: PropTypes.array,
   baseDecorator: PropTypes.func,
   styleMap: PropTypes.object,
+  styleFn: PropTypes.func,
   buttons: PropTypes.array,
   overlays: PropTypes.array,
   blockRendererFn: PropTypes.func,
@@ -54,6 +55,7 @@ const EditorWrapper = createReactClass({
       decorators: [],
       baseDecorator: CompositeDecorator,
       styleMap: {},
+      styleFn: () => { },
       buttons: [],
       overlays: [],
       blockRendererFn: () => { },
@@ -236,6 +238,7 @@ const EditorWrapper = createReactClass({
   render() {
     const {
       styleMap,
+      styleFn,
       blockRendererFn,
       blockStyleFn,
       onChange,
@@ -260,6 +263,7 @@ const EditorWrapper = createReactClass({
             blockStyleFn={blockStyleFn}
             blockRendererFn={blockRendererFn}
             customStyleMap={styleMap}
+            customStyleFn={styleFn}
             handleKeyCommand={handleKeyCommand}
             keyBindingFn={this.keyBindingFn}
             handleReturn={this.handleReturn}

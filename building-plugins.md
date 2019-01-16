@@ -106,6 +106,8 @@ Factory function to create plugins. `createPlugin` takes one `options` object ar
     - default: `[]`
 - `styleMap: {[inlineStyleType: string]: Object}` - Object map of styles to apply to any inline styles in the editor. Used in the `customStyleMap` prop on the Draft.js `Editor` component.
     - default: `{}`
+- `styleFn: {[style: DraftInlineStyle, block: ContentBlock]: ?Object}` - Function that inspects each content block and its current inline styles and returns an object of CSS styles which are applied to a span containing the content block's text. Used in the `customStyleFn` prop on the Draft.js `Editor` component.
+    - default: `() => {}`
 - `blockStyleFn: function(contentBlock: ContentBlock): ?string` - Function that inspects a Draft.js ContentBlock and returns a string `class` that if it exists is applied to the block element in the DOM. If no class should be added it may return nothing. See [Draft.js' block styling documentation](https://facebook.github.io/draft-js/docs/advanced-topics-block-styling.html) for more information.
     - default: `() => {}`
 - `blockRendererFn: function(contentBlock: ContentBlock): ?BlockRendererObject` - Function that inspects a Draft.js ContentBlock and returns a custom block renderer object if it should be rendered differently. If no custom renderer should be used it may return nothing. The block renderer object is of shape `{component, editable, props}`. See [Draft.js' custom block components documentation](https://facebook.github.io/draft-js/docs/advanced-topics-block-components.html) for more information.

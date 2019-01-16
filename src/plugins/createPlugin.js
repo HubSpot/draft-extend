@@ -30,6 +30,7 @@ const createPlugin = ({
   buttons = emptyArray,
   overlays = emptyArray,
   styleMap = emptyObject,
+  styleFn = emptyFunction,
   blockRendererFn = emptyFunction,
   blockStyleFn = emptyFunction,
   keyBindingFn = emptyFunction,
@@ -55,6 +56,7 @@ const createPlugin = ({
 
       propTypes: {
         styleMap: PropTypes.object,
+        styleFn: PropTypes.func,
         decorators: PropTypes.array,
         buttons: PropTypes.array,
         overlays: PropTypes.array,
@@ -67,6 +69,7 @@ const createPlugin = ({
       getDefaultProps() {
         return {
           styleMap: emptyObject,
+          styleFn: emptyFunction,
           decorators: emptyArray,
           buttons: emptyArray,
           overlays: emptyArray,
@@ -91,6 +94,7 @@ const createPlugin = ({
 
       render() {
         const newStyleMap = memoizedAssign(this.props.styleMap, styleMap);
+        const newStyleFn = memoizedAccumulateFunction(this.props.styleFn, styleFn);
         const newDecorators = memoizedConcat(this.props.decorators, decorators);
         const newButtons = memoizedConcat(this.props.buttons, buttons);
         const newOverlays = memoizedConcat(this.props.overlays, overlays);
@@ -104,6 +108,7 @@ const createPlugin = ({
             {...this.props}
             ref="child"
             styleMap={newStyleMap}
+            styleFn={newStyleFn}
             decorators={newDecorators}
             buttons={newButtons}
             overlays={newOverlays}
