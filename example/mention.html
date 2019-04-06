@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/prop-types/prop-types.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
@@ -39,43 +38,40 @@
       const {
         Editor,
         createPlugin,
-        pluginUtils: {entityStrategy}
+        pluginUtils: { entityStrategy },
       } = window.DraftExtend;
 
-      const {
-        convertToHTML,
-        convertFromHTML
-      } = window.DraftConvert;
+      const { convertToHTML, convertFromHTML } = window.DraftConvert;
 
       const ENTITY_TYPE = 'mention';
 
       const users = [
         {
           value: 'user1',
-          text: 'User 1'
+          text: 'User 1',
         },
         {
           value: 'user2',
-          text: 'User 2'
-        }
+          text: 'User 2',
+        },
       ];
 
       const MentionDecorator = {
         strategy: entityStrategy(ENTITY_TYPE),
-        component: (props) => {
+        component: props => {
           return (
             <span
               style={{
                 padding: '2px',
                 borderRadius: '2px',
                 background: 'blue',
-                color: 'white'
+                color: 'white',
               }}
             >
               {props.children}
             </span>
           );
-        }
+        },
       };
 
       const entityToHTML = (entity, originalText) => {
@@ -85,60 +81,51 @@
         return originalText;
       };
 
-      const textToEntity = (text) => {
+      const textToEntity = text => {
         const results = [];
         const pattern = /@([\w\d]+)/gi;
         text.replace(pattern, (match, value, offset) => {
-          const user = users.find((u) => {
+          const user = users.find(u => {
             return u.value === value;
           });
 
           results.push({
             offset,
             length: match.length,
-            entity: Entity.create(ENTITY_TYPE, 'IMMUTABLE', {value}),
-            result: user.text
+            entity: Entity.create(ENTITY_TYPE, 'IMMUTABLE', { value }),
+            result: user.text,
           });
         });
 
         return results;
       };
 
-      const MentionResults = createReactClass({
-        propTypes: {
-          search: PropTypes.string.isRequired,
-          offset: PropTypes.number.isRequired,
-          length: PropTypes.number.isRequired,
-          results: PropTypes.array.isRequired,
-          onSelect: PropTypes.func.isRequired,
-          addKeyCommandListener: PropTypes.func.isRequired,
-          removeKeyCommandListener: PropTypes.func.isRequired
-        },
+      class MentionResults extends React.Component {
+        constructor(props) {
+          super(props);
 
-        getInitialState() {
-          return {
-            selection: 0
+          this.state = {
+            selection: 0,
           };
-        },
+
+          this.handleKeyCommand = this.handleKeyCommand.bind(this);
+          this.arrowUp = this.arrowUp.bind(this);
+          this.arrowDown = this.arrowDown.bind(this);
+          this.selectItem = this.selectItem.bind(this);
+        }
 
         componentDidMount() {
           this.props.addKeyCommandListener(this.handleKeyCommand);
-        },
+        }
 
         componentWillUnmount() {
           this.props.removeKeyCommandListener(this.handleKeyCommand);
-        },
+        }
 
         handleKeyCommand(editorState, command, keyboardEvent) {
-          const {
-            search,
-            offset,
-            length,
-            results,
-            onSelect
-          } = this.props;
+          const { search, offset, length, results, onSelect } = this.props;
 
-          const {selection} = this.state;
+          const { selection } = this.state;
 
           const option = selection < results.length ? results[selection] : null;
 
@@ -148,7 +135,7 @@
               keyboardEvent.preventDefault();
               keyboardEvent.stopPropagation();
               if (option !== null) {
-                onSelect(option, {search, offset, length});
+                onSelect(option, { search, offset, length });
                 return true;
               }
               return null;
@@ -163,52 +150,45 @@
             default:
               return null;
           }
-        },
+        }
 
         arrowUp() {
-          const {selection} = this.state;
+          const { selection } = this.state;
 
           if (selection > 0) {
             this.setState({
-              selection: selection - 1
+              selection: selection - 1,
             });
           }
-        },
+        }
 
         arrowDown() {
-          const {results} = this.props;
-          const {selection} = this.state;
+          const { results } = this.props;
+          const { selection } = this.state;
 
           if (results.length > selection + 1) {
             this.setState({
-              selection: selection + 1
+              selection: selection + 1,
             });
           }
-        },
+        }
 
-        selectItem({value, text}) {
-          const {
-            search,
-            offset,
-            length,
-            onSelect
-          } = this.props;
+        selectItem({ value, text }) {
+          const { search, offset, length, onSelect } = this.props;
 
-          onSelect({value, text}, {search, offset, length});
-        },
+          onSelect({ value, text }, { search, offset, length });
+        }
 
         renderResults() {
-          const {
-            results,
-          } = this.props;
+          const { results } = this.props;
 
-          const {selection} = this.state;
+          const { selection } = this.state;
 
           const itemStyle = {
             listStyleType: 'none',
             padding: '4px',
             background: 'white',
-            cursor: 'pointer'
+            cursor: 'pointer',
           };
 
           if (results.length === 0) {
@@ -217,13 +197,10 @@
                 style={{
                   margin: '0',
                   padding: '0',
-                  fontFamily: 'sans-serif'
+                  fontFamily: 'sans-serif',
                 }}
               >
-                <li
-                  style={itemStyle}
-                  key="empty"
-                >
+                <li style={itemStyle} key="empty">
                   No matches found
                 </li>
               </ul>
@@ -237,24 +214,21 @@
             if (highlighted) {
               style = Object.assign({}, itemStyle, {
                 background: 'blue',
-                color: 'white'
+                color: 'white',
               });
             }
 
             const handleClick = () => {
               this.selectItem(option);
-            }
+            };
 
             return (
-              <li
-                key={option.value}
-                style={style}
-                onClick={handleClick}>
+              <li key={option.value} style={style} onClick={handleClick}>
                 {option.text}
               </li>
             );
           });
-        },
+        }
 
         render() {
           return (
@@ -262,56 +236,67 @@
               style={{
                 margin: '0',
                 padding: '0',
-                fontFamily: 'sans-serif'
+                fontFamily: 'sans-serif',
               }}
             >
               {this.renderResults()}
             </ul>
           );
         }
-      });
+      }
+
+      MentionResults.propTypes = {
+        search: PropTypes.string.isRequired,
+        offset: PropTypes.number.isRequired,
+        length: PropTypes.number.isRequired,
+        results: PropTypes.array.isRequired,
+        onSelect: PropTypes.func.isRequired,
+        addKeyCommandListener: PropTypes.func.isRequired,
+        removeKeyCommandListener: PropTypes.func.isRequired,
+      };
 
       const TYPING_TRIGGER_REGEX = new RegExp('(\\B@[\\w\\s]{1,10})$');
 
-      const MentionOverlay = createReactClass({
-        propTypes: {
-          editorState: PropTypes.object.isRequired,
-          onChange: PropTypes.func.isRequired,
-          addKeyCommandListener: PropTypes.func.isRequired,
-          removeKeyCommandListener: PropTypes.func.isRequired
-        },
+      class MentionOverlay extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.selectOption = this.selectOption.bind(this);
+        }
 
         getCurrentSearch() {
           const selection = this.props.editorState.getSelection();
           const contentState = this.props.editorState.getCurrentContent();
-          const blockText = contentState.getBlockForKey(selection.getStartKey()).getText();
+          const blockText = contentState
+            .getBlockForKey(selection.getStartKey())
+            .getText();
           const offset = selection.getStartOffset();
 
           if (!selection.isCollapsed()) {
             return null;
           }
 
-          const matchArray = blockText.slice(0, offset).match(TYPING_TRIGGER_REGEX);
+          const matchArray = blockText
+            .slice(0, offset)
+            .match(TYPING_TRIGGER_REGEX);
           if (matchArray === null) {
             return null;
           }
 
           const beforeCursorText = matchArray[1].slice(1);
           const pastCursorMatch = blockText.slice(offset).match(/^\w+/);
-          const pastCursorText = pastCursorMatch !== null ? pastCursorMatch[0] : '';
+          const pastCursorText =
+            pastCursorMatch !== null ? pastCursorMatch[0] : '';
 
           return {
             search: beforeCursorText + pastCursorText,
             offset: offset - beforeCursorText.length - 1,
-            length: 1 + beforeCursorText.length + pastCursorText.length
+            length: 1 + beforeCursorText.length + pastCursorText.length,
           };
-        },
+        }
 
-        selectOption(option, {offset, length}) {
-          const {
-            editorState,
-            onChange
-          } = this.props;
+        selectOption(option, { offset, length }) {
+          const { editorState, onChange } = this.props;
 
           const blockKey = editorState.getSelection().getStartKey();
 
@@ -319,7 +304,7 @@
             anchorOffset: offset,
             focusOffset: offset + length,
             isBackward: false,
-            hasFocus: true
+            hasFocus: true,
           });
 
           const contentState = Modifier.replaceText(
@@ -331,42 +316,37 @@
           );
 
           onChange(
-            EditorState.push(
-              editorState,
-              contentState,
-              'insert-characters'
-            )
+            EditorState.push(editorState, contentState, 'insert-characters')
           );
-        },
+        }
 
         getResults(search) {
           const regex = new RegExp(search.trim(), 'i');
-          return this.props.users.filter(({value, text}) => {
-            return (text.match(regex) !== null || value.toString().match(regex) !== null);
+          return this.props.users.filter(({ value, text }) => {
+            return (
+              text.match(regex) !== null ||
+              value.toString().match(regex) !== null
+            );
           });
-        },
+        }
 
         render() {
           const {
             addKeyCommandListener,
-            removeKeyCommandListener
+            removeKeyCommandListener,
           } = this.props;
 
           const currentSearch = this.getCurrentSearch();
           const shouldBeOpen = currentSearch !== null;
 
           if (shouldBeOpen) {
-            const {
-              top,
-              left,
-              height
-            } = getVisibleSelectionRect(window);
+            const { top, left, height } = getVisibleSelectionRect(window);
 
             const results = this.getResults(currentSearch.search);
 
-            const clickOption = (option) => {
+            const clickOption = option => {
               return this.selectOption(option, currentSearch);
-            }
+            };
 
             return (
               <div
@@ -374,7 +354,7 @@
                   position: 'absolute',
                   top: `${top + height}px`,
                   left: `${left}px`,
-                  boxShadow: '0 4px 11px rgba(0, 0, 0, 0.2)'
+                  boxShadow: '0 4px 11px rgba(0, 0, 0, 0.2)',
                 }}
               >
                 <MentionResults
@@ -390,32 +370,44 @@
 
           return null;
         }
-      });
+      }
+
+      MentionOverlay.propTypes = {
+        editorState: PropTypes.object.isRequired,
+        onChange: PropTypes.func.isRequired,
+        addKeyCommandListener: PropTypes.func.isRequired,
+        removeKeyCommandListener: PropTypes.func.isRequired,
+      };
 
       const MentionPlugin = createPlugin({
         decorators: MentionDecorator,
         overlays: MentionOverlay,
         textToEntity,
-        entityToHTML
+        entityToHTML,
       });
 
       const WithPlugin = MentionPlugin(Editor);
       const toHTML = MentionPlugin(convertToHTML);
       const fromHTML = MentionPlugin(convertFromHTML);
 
-      const MentionExample = createReactClass({
-        getInitialState() {
-          return {
+      class MentionExample extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
             editorState: EditorState.createWithContent(
-              fromHTML('<div>Mention example @user1. Type @ to add a new mention for User 1 or User 2</div>')
-            )
+              fromHTML(
+                '<div>Mention example @user1. Type @ to add a new mention for User 1 or User 2</div>'
+              )
+            ),
           };
-        },
+
+          this.onChange = this.onChange.bind(this);
+        }
 
         onChange(editorState) {
           console.log(toHTML(editorState.getCurrentContent()));
-          this.setState({editorState});
-        },
+          this.setState({ editorState });
+        }
 
         render() {
           return (
@@ -426,14 +418,17 @@
             />
           );
         }
-      });
+      }
 
-      ReactDOM.render(
-        <MentionExample />,
-        document.getElementById('target')
-      );
+      ReactDOM.render(<MentionExample />, document.getElementById('target'));
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(
+        Babel.transform(
+          document.querySelector('script[type="text/babel"]').innerText,
+          { presets: ['es2015', 'react'] }
+        ).code
+      );
     </script>
   </body>
+</html>

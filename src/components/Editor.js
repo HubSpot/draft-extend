@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import createReactClass from 'create-react-class';
 import {
   Editor,
   EditorState,
   CompositeDecorator,
-  getDefaultKeyBinding
+  getDefaultKeyBinding,
 } from 'draft-js';
 import KeyCommandController from './KeyCommandController';
 import OverlayWrapper from './OverlayWrapper';
@@ -35,46 +34,31 @@ const propTypes = {
   renderTray: PropTypes.func,
 };
 
-const EditorWrapper = createReactClass({
-  propTypes,
+class EditorWrapper extends React.Component {
+  constructor(props) {
+    super(props);
 
-  childContextTypes: {
-    getEditorState: PropTypes.func,
-    getReadOnly: PropTypes.func,
-    setReadOnly: PropTypes.func,
-    onChange: PropTypes.func,
-    focus: PropTypes.func,
-    blur: PropTypes.func
-  },
+    const { baseDecorator } = props;
 
-  getDefaultProps() {
-    return {
-      className: '',
-      editorState: EditorState.createEmpty(),
-      onChange: () => { },
-      decorators: [],
-      baseDecorator: CompositeDecorator,
-      styleMap: {},
-      styleFn: () => { },
-      buttons: [],
-      overlays: [],
-      blockRendererFn: () => { },
-      blockStyleFn: () => { },
-      keyBindingFn: () => { },
-      readOnly: false,
-      showButtons: true
-    };
-  },
-
-  getInitialState() {
-    const { baseDecorator } = this.props;
-
-    const decorator = new baseDecorator(this.props.decorators);
-    return {
+    const decorator = new baseDecorator(props.decorators);
+    this.state = {
       decorator,
-      readOnly: false
+      readOnly: false,
     };
-  },
+
+    this.keyBindingFn = this.keyBindingFn.bind(this);
+    this.handleReturn = this.handleReturn.bind(this);
+    this.onEscape = this.onEscape.bind(this);
+    this.onTab = this.onTab.bind(this);
+    this.onUpArrow = this.onUpArrow.bind(this);
+    this.onDownArrow = this.onDownArrow.bind(this);
+    this.focus = this.focus.bind(this);
+    this.blur = this.blur.bind(this);
+    this.getOtherProps = this.getOtherProps.bind(this);
+    this.getReadOnly = this.getReadOnly.bind(this);
+    this.setReadOnly = this.setReadOnly.bind(this);
+    this.getDecoratedState = this.getDecoratedState.bind(this);
+  }
 
   getChildContext() {
     return {
@@ -83,22 +67,28 @@ const EditorWrapper = createReactClass({
       setReadOnly: this.setReadOnly,
       onChange: this.props.onChange,
       focus: this.focus,
-      blur: this.blur
+      blur: this.blur,
     };
-  },
+  }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.decorators.length === this.state.decorator._decorators.length) {
-      const allDecoratorsMatch = this.state.decorator._decorators.every((decorator, i) => {
-        return decorator === nextProps.decorators[i];
-      });
+    if (
+      nextProps.decorators.length === this.state.decorator._decorators.length
+    ) {
+      const allDecoratorsMatch = this.state.decorator._decorators.every(
+        (decorator, i) => {
+          return decorator === nextProps.decorators[i];
+        }
+      );
       if (allDecoratorsMatch) {
         return;
       }
     }
 
-    this.setState({ decorator: new nextProps.baseDecorator(nextProps.decorators) });
-  },
+    this.setState({
+      decorator: new nextProps.baseDecorator(nextProps.decorators),
+    });
+  }
 
   keyBindingFn(e) {
     const pluginsCommand = this.props.keyBindingFn(e);
@@ -107,41 +97,56 @@ const EditorWrapper = createReactClass({
     }
 
     return getDefaultKeyBinding(e);
-  },
+  }
 
   handleReturn(e, editorState) {
-    return (this.props.handleReturn && this.props.handleReturn(e, editorState)) || this.props.handleKeyCommand('return', e);
-  },
+    return (
+      (this.props.handleReturn && this.props.handleReturn(e, editorState)) ||
+      this.props.handleKeyCommand('return', e)
+    );
+  }
 
   onEscape(e) {
-    return (this.props.onEscape && this.props.onEscape(e)) || this.props.handleKeyCommand('escape', e);
-  },
+    return (
+      (this.props.onEscape && this.props.onEscape(e)) ||
+      this.props.handleKeyCommand('escape', e)
+    );
+  }
 
   onTab(e) {
-    return (this.props.onTab && this.props.onTab(e)) || this.props.handleKeyCommand('tab', e);
-  },
+    return (
+      (this.props.onTab && this.props.onTab(e)) ||
+      this.props.handleKeyCommand('tab', e)
+    );
+  }
 
   onUpArrow(e) {
-    return (this.props.onUpArrow && this.props.onUpArrow(e)) || this.props.handleKeyCommand('up-arrow', e);
-  },
+    return (
+      (this.props.onUpArrow && this.props.onUpArrow(e)) ||
+      this.props.handleKeyCommand('up-arrow', e)
+    );
+  }
 
   onDownArrow(e) {
-    return (this.props.onDownArrow && this.props.onDownArrow(e)) || this.props.handleKeyCommand('down-arrow', e);
-  },
+    return (
+      (this.props.onDownArrow && this.props.onDownArrow(e)) ||
+      this.props.handleKeyCommand('down-arrow', e)
+    );
+  }
 
   focus() {
     this.refs.editor.focus();
-  },
+  }
 
   blur() {
     this.refs.editor.blur();
-  },
+  }
 
   getOtherProps() {
     const propKeys = Object.keys(this.props);
     const propTypeKeys = Object.keys(propTypes);
 
-    const propsToPass = propKeys.filter((prop) => {
+    const propsToPass = propKeys.filter(prop => {
       return propTypeKeys.indexOf(prop) === -1;
     });
 
@@ -149,15 +154,15 @@ const EditorWrapper = createReactClass({
       acc[prop] = this.props[prop];
       return acc;
     }, {});
-  },
+  }
 
   getReadOnly() {
     return this.state.readOnly || this.props.readOnly;
-  },
+  }
 
   setReadOnly(readOnly) {
     this.setState({ readOnly });
-  },
+  }
 
   getDecoratedState() {
     const { editorState } = this.props;
@@ -165,12 +170,15 @@ const EditorWrapper = createReactClass({
 
     const currentDecorator = editorState.getDecorator();
 
-    if (currentDecorator && currentDecorator._decorators === decorator._decorators) {
+    if (
+      currentDecorator &&
+      currentDecorator._decorators === decorator._decorators
+    ) {
       return editorState;
     }
 
     return EditorState.set(editorState, { decorator });
-  },
+  }
 
   renderTray() {
     const { renderTray } = this.props;
@@ -180,14 +188,14 @@ const EditorWrapper = createReactClass({
     }
 
     return renderTray();
-  },
+  }
 
   renderPluginButtons() {
     const {
       onChange,
       addKeyCommandListener,
       removeKeyCommandListener,
-      showButtons
+      showButtons,
     } = this.props;
 
     if (showButtons === false) {
@@ -209,13 +217,13 @@ const EditorWrapper = createReactClass({
         />
       );
     });
-  },
+  }
 
   renderOverlays() {
     const {
       onChange,
       addKeyCommandListener,
-      removeKeyCommandListener
+      removeKeyCommandListener,
     } = this.props;
 
     const decoratedState = this.getDecoratedState();
@@ -233,7 +241,7 @@ const EditorWrapper = createReactClass({
         </OverlayWrapper>
       );
     });
-  },
+  }
 
   render() {
     const {
@@ -272,19 +280,43 @@ const EditorWrapper = createReactClass({
             onUpArrow={this.onUpArrow}
             onDownArrow={this.onDownArrow}
           />
-          <div className="draft-extend-tray">
-            {this.renderTray()}
-          </div>
+          <div className="draft-extend-tray">{this.renderTray()}</div>
           <div className="draft-extend-controls">
             {this.renderPluginButtons()}
           </div>
-          <div className="draft-extend-overlays">
-            {this.renderOverlays()}
-          </div>
+          <div className="draft-extend-overlays">{this.renderOverlays()}</div>
         </div>
       </div>
     );
   }
-});
+}
+
+EditorWrapper.propTypes = propTypes;
+
+EditorWrapper.defaultProps = {
+  className: '',
+  editorState: EditorState.createEmpty(),
+  onChange: () => {},
+  decorators: [],
+  baseDecorator: CompositeDecorator,
+  styleMap: {},
+  styleFn: () => {},
+  buttons: [],
+  overlays: [],
+  blockRendererFn: () => {},
+  blockStyleFn: () => {},
+  keyBindingFn: () => {},
+  readOnly: false,
+  showButtons: true,
+};
+
+EditorWrapper.childContextTypes = {
+  getEditorState: PropTypes.func,
+  getReadOnly: PropTypes.func,
+  setReadOnly: PropTypes.func,
+  onChange: PropTypes.func,
+  focus: PropTypes.func,
+  blur: PropTypes.func,
+};
 
 export default KeyCommandController(EditorWrapper);
