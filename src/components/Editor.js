@@ -44,7 +44,8 @@ const EditorWrapper = createReactClass({
     setReadOnly: PropTypes.func,
     onChange: PropTypes.func,
     focus: PropTypes.func,
-    blur: PropTypes.func
+    blur: PropTypes.func,
+    editorRef: PropTypes.node
   },
 
   getDefaultProps() {
@@ -83,7 +84,8 @@ const EditorWrapper = createReactClass({
       setReadOnly: this.setReadOnly,
       onChange: this.props.onChange,
       focus: this.focus,
-      blur: this.blur
+      blur: this.blur,
+      editorRef: this.refs.editor
     };
   },
 
