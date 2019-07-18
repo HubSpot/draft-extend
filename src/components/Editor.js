@@ -45,7 +45,7 @@ const EditorWrapper = createReactClass({
     onChange: PropTypes.func,
     focus: PropTypes.func,
     blur: PropTypes.func,
-    editorRef: PropTypes.node
+    editorRef: PropTypes.object
   },
 
   getDefaultProps() {
