@@ -6,6 +6,7 @@ import memoize from '../util/memoize';
 import compose from '../util/compose';
 import accumulateFunction from '../util/accumulateFunction';
 import middlewareAdapter from '../util/middlewareAdapter';
+import accumulatePluginOptions from './accumulatePluginOptions';
 
 const emptyFunction = () => {};
 const emptyArray = [];
@@ -119,6 +120,18 @@ const createPlugin = ({
           />
         );
       }
+    });
+  } else if (ToWrap && ToWrap.__isAccumulator) {
+    return accumulatePluginOptions(ToWrap, {
+      styleMap,
+      styleFn,
+      decorators,
+      buttons,
+      overlays,
+      blockRendererFn,
+      blockStyleFn,
+      keyBindingFn,
+      keyCommandListener,
     });
   } else {
     // wrapping a converter function
