@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
@@ -27,46 +26,35 @@
     <script src="../node_modules/draft-convert/dist/draft-convert.js"></script>
     <script src="./ToolbarButton.js"></script>
     <script type="text/babel">
-      const {
-        EditorState,
-        RichUtils
-      } = Draft;
+      const { EditorState, RichUtils } = Draft;
 
       const {
         Editor,
         Toolbar,
         KeyCommandController,
-        createPlugin
+        createPlugin,
       } = window.DraftExtend;
 
-      const {
-        convertToHTML,
-        convertFromHTML
-      } = window.DraftConvert;
+      const { convertToHTML, convertFromHTML } = window.DraftConvert;
 
       const BLOCK_TYPES = [
-        {label: 'Plain', style: 'unstyled'},
-        {label: 'H1', style: 'header-one'},
-        {label: 'H2', style: 'header-two'},
-        {label: 'H3', style: 'header-three'},
-        {label: 'H4', style: 'header-four'},
-        {label: 'H5', style: 'header-five'},
-        {label: 'H6', style: 'header-six'},
-        {label: 'Blockquote', style: 'blockquote'},
-        {label: 'UL', style: 'unordered-list-item'},
-        {label: 'OL', style: 'ordered-list-item'},
-        {label: 'Code Block', style: 'code-block'}
+        { label: 'Plain', style: 'unstyled' },
+        { label: 'H1', style: 'header-one' },
+        { label: 'H2', style: 'header-two' },
+        { label: 'H3', style: 'header-three' },
+        { label: 'H4', style: 'header-four' },
+        { label: 'H5', style: 'header-five' },
+        { label: 'H6', style: 'header-six' },
+        { label: 'Blockquote', style: 'blockquote' },
+        { label: 'UL', style: 'unordered-list-item' },
+        { label: 'OL', style: 'ordered-list-item' },
+        { label: 'Code Block', style: 'code-block' },
       ];
 
-      const createBlockStyleButton = ({label, style}) => {
-        return ({editorState, onChange}) => {
+      const createBlockStyleButton = ({ label, style }) => {
+        return ({ editorState, onChange }) => {
           const toggleStyle = () => {
-            onChange(
-              RichUtils.toggleBlockType(
-                editorState,
-                style
-              )
-            );
+            onChange(RichUtils.toggleBlockType(editorState, style));
           };
 
           const currentBlockStyle = editorState
@@ -87,7 +75,7 @@
       };
 
       const BlockPlugin = createPlugin({
-        buttons: BLOCK_TYPES.map(createBlockStyleButton)
+        buttons: BLOCK_TYPES.map(createBlockStyleButton),
       });
 
       const WithPlugin = BlockPlugin(Editor);
@@ -95,19 +83,25 @@
       const toHTML = BlockPlugin(convertToHTML);
       const fromHTML = BlockPlugin(convertFromHTML);
 
-      const BlockStylesExample = createReactClass({
-        getInitialState() {
-          return {
+      class BlockStylesExample extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.state = {
             editorState: EditorState.createWithContent(
-              fromHTML('<h1>Block style plugin</h1><ul><li>list item 1</li><li>list item 2</li></ul>')
-            )
+              fromHTML(
+                '<h1>Block style plugin</h1><ul><li>list item 1</li><li>list item 2</li></ul>'
+              )
+            ),
           };
-        },
+
+          this.onChange = this.onChange.bind(this);
+        }
 
         onChange(editorState) {
           console.log(toHTML(editorState.getCurrentContent()));
-          this.setState({editorState});
-        },
+          this.setState({ editorState });
+        }
 
         render() {
           return (
@@ -125,16 +119,19 @@
             </div>
           );
         }
-      });
+      }
 
       const WrappedComponent = KeyCommandController(BlockStylesExample);
 
-      ReactDOM.render(
-        <WrappedComponent />,
-        document.getElementById('target')
-      );
+      ReactDOM.render(<WrappedComponent />, document.getElementById('target'));
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(
+        Babel.transform(
+          document.querySelector('script[type="text/babel"]').innerText,
+          { presets: ['es2015', 'react'] }
+        ).code
+      );
     </script>
   </body>
+</html>

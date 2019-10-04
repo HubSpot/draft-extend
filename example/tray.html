@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
@@ -27,47 +26,33 @@
     <script src="../node_modules/draft-convert/dist/draft-convert.js"></script>
     <script src="./ToolbarButton.js"></script>
     <script type="text/babel">
-      const {
-        EditorState,
-        RichUtils
-      } = Draft;
+      const { EditorState, RichUtils } = Draft;
 
-      const {
-        Editor,
-        createPlugin
-      } = window.DraftExtend;
+      const { Editor, createPlugin } = window.DraftExtend;
 
-      const {
-        convertToHTML,
-        convertFromHTML
-      } = window.DraftConvert;
+      const { convertToHTML, convertFromHTML } = window.DraftConvert;
 
       const INLINE_STYLES = [
-        {label: 'Bold', style: 'BOLD'},
-        {label: 'Italic', style: 'ITALIC'},
-        {label: 'Underline', style: 'UNDERLINE'},
-        {label: 'Code', style: 'CODE'},
-        {label: 'Strikethrough', style: 'STRIKETHROUGH'}
+        { label: 'Bold', style: 'BOLD' },
+        { label: 'Italic', style: 'ITALIC' },
+        { label: 'Underline', style: 'UNDERLINE' },
+        { label: 'Code', style: 'CODE' },
+        { label: 'Strikethrough', style: 'STRIKETHROUGH' },
       ];
 
-      const styleToHTML = (style) => {
+      const styleToHTML = style => {
         if (style === 'STRIKETHROUGH') {
           return <s />;
         }
         if (style === 'CODE') {
-          return <div style={{fontFamily: 'monospace'}} />;
+          return <div style={{ fontFamily: 'monospace' }} />;
         }
       };
 
-      const createInlineStyle = ({label, style}) => {
-        return ({editorState, onChange}) => {
+      const createInlineStyle = ({ label, style }) => {
+        return ({ editorState, onChange }) => {
           const toggleStyle = () => {
-            onChange(
-              RichUtils.toggleInlineStyle(
-                editorState,
-                style
-              )
-            );
+            onChange(RichUtils.toggleInlineStyle(editorState, style));
           };
 
           const currentInlineStyle = editorState.getCurrentInlineStyle();
@@ -86,41 +71,48 @@
 
       const InlinePlugin = createPlugin({
         buttons: INLINE_STYLES.map(createInlineStyle),
-        styleToHTML
+        styleToHTML,
       });
 
       const WithPlugin = InlinePlugin(Editor);
       const toHTML = InlinePlugin(convertToHTML);
       const fromHTML = InlinePlugin(convertFromHTML);
 
-      const InlineStylesExample = createReactClass({
-        getInitialState() {
-          return {
+      class InlineStylesExample extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = {
             editorState: EditorState.createWithContent(
-              fromHTML('<div><strong>Inline</strong> styles <em>example</em></div>')
-            )
+              fromHTML(
+                '<div><strong>Inline</strong> styles <em>example</em></div>'
+              )
+            ),
           };
-        },
+          this.onChange = this.onChange.bind(this);
+        }
 
         onChange(editorState) {
           console.log(toHTML(editorState.getCurrentContent()));
-          this.setState({editorState});
-        },
+          this.setState({ editorState });
+        }
 
         renderTray() {
           return (
-            <div style={{
-              color: 'firebrick',
-              fontSize: 14,
-              marginBottom: 8,
-              maxWidth: 500
-            }}>
-              Arbitrary information can be displayed in a tray,
-              located between the editor body and the plugin button controls.
-              It's a good place to display validation warnings or information related to plugin data.
+            <div
+              style={{
+                color: 'firebrick',
+                fontSize: 14,
+                marginBottom: 8,
+                maxWidth: 500,
+              }}
+            >
+              Arbitrary information can be displayed in a tray, located between
+              the editor body and the plugin button controls. It's a good place
+              to display validation warnings or information related to plugin
+              data.
             </div>
           );
-        },
+        }
 
         render() {
           return (
@@ -132,7 +124,7 @@
             />
           );
         }
-      });
+      }
 
       ReactDOM.render(
         <InlineStylesExample />,
@@ -140,6 +132,12 @@
       );
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(
+        Babel.transform(
+          document.querySelector('script[type="text/babel"]').innerText,
+          { presets: ['es2015', 'react'] }
+        ).code
+      );
     </script>
   </body>
+</html>
