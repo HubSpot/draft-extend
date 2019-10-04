@@ -68,6 +68,7 @@ class EditorWrapper extends React.Component {
       onChange: this.props.onChange,
       focus: this.focus,
       blur: this.blur,
+      editorRef: this.refs.editor,
     };
   }
 
@@ -317,6 +318,7 @@ EditorWrapper.childContextTypes = {
   onChange: PropTypes.func,
   focus: PropTypes.func,
   blur: PropTypes.func,
+  editorRef: PropTypes.object,
 };
 
 export default KeyCommandController(EditorWrapper);
