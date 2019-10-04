@@ -1,11 +1,14 @@
 import accumulateFunction from '../util/accumulateFunction';
+import memoize from '../util/memoize';
 
 const emptyFunction = () => {};
 const emptyArray = [];
 const emptyObject = {};
 
-const concat = (a1 = [], a2) => a1.concat(a2);
-const assign = (...args) => Object.assign({}, ...args);
+const memoizedAccumulateFunction = memoize(accumulateFunction);
+const memoizedAssign = memoize((...args) => Object.assign({}, ...args));
+const memoizedConcat = memoize((a1, a2) => a1.concat(a2));
+const memoizedCoerceArray = memoize(arg => (Array.isArray(arg) ? arg : [arg]));
 
 export default (accumulation, pluginConfig) => {
   const accumulationWithDefaults = {
@@ -17,7 +20,7 @@ export default (accumulation, pluginConfig) => {
     blockRendererFn: emptyFunction,
     blockStyleFn: emptyFunction,
     keyBindingFn: emptyFunction,
-    keyCommandListener: emptyFunction,
+    keyCommandListeners: emptyArray,
     ...accumulation,
   };
 
@@ -33,28 +36,38 @@ export default (accumulation, pluginConfig) => {
     keyCommandListener,
   } = pluginConfig;
 
+  const keyCommandListeners = memoizedConcat(
+    accumulationWithDefaults.keyCommandListeners,
+    memoizedCoerceArray(keyCommandListener)
+  );
+
   return {
     ...accumulationWithDefaults,
-    styleMap: assign(accumulationWithDefaults.styleMap, styleMap),
-    styleFn: accumulateFunction(accumulationWithDefaults.styleFn, styleFn),
-    decorators: concat(decorators, accumulationWithDefaults.decorators),
-    buttons: concat(buttons, accumulationWithDefaults.buttons),
-    overlays: concat(overlays, accumulationWithDefaults.overlays),
-    blockRendererFn: accumulateFunction(
-      accumulationWithDefaults.blockRendererFn,
-      blockRendererFn
+    styleMap: memoizedAssign(accumulationWithDefaults.styleMap, styleMap),
+    styleFn: memoizedAccumulateFunction(
+      accumulationWithDefaults.styleFn,
+      styleFn
     ),
-    blockStyleFn: accumulateFunction(
-      accumulationWithDefaults.blockStyleFn,
-      blockStyleFn
+    decorators: memoizedConcat(accumulationWithDefaults.decorators, decorators),
+    buttons: memoizedConcat(accumulationWithDefaults.buttons, buttons),
+    overlays: memoizedConcat(accumulationWithDefaults.overlays, overlays),
+    blockRendererFn: memoizedAccumulateFunction(
+      blockRendererFn,
+      accumulationWithDefaults.blockRendererFn
     ),
-    keyBindingFn: accumulateFunction(
-      accumulationWithDefaults.keyBindingFn,
-      keyBindingFn
+    blockStyleFn: memoizedAccumulateFunction(
+      blockStyleFn,
+      accumulationWithDefaults.blockStyleFn
     ),
-    keyCommandListener: accumulateFunction(
-      accumulationWithDefaults.keyCommandListener,
-      keyCommandListener
+    keyBindingFn: memoizedAccumulateFunction(
+      keyBindingFn,
+      accumulationWithDefaults.keyBindingFn
     ),
+    
+    // `createPlugin` expects a singular `keyCommandListener`, but Editor
+    // component props expect the plural `keyCommandListeners`, so return both
+    // since this is used in both contexts
+    keyCommandListeners,
+    keyCommandListener: keyCommandListeners,
   };
 };
