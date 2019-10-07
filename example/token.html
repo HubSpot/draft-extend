@@ -16,7 +16,6 @@
   <body>
     <div id="target"></div>
     <script src="../node_modules/react/umd/react.development.js"></script>
-    <script src="../node_modules/create-react-class/create-react-class.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom.development.js"></script>
     <script src="../node_modules/react-dom/umd/react-dom-server.browser.development.js"></script>
     <script src="../node_modules/immutable/dist/immutable.min.js"></script>
@@ -27,41 +26,34 @@
     <script src="../node_modules/draft-convert/dist/draft-convert.js"></script>
     <script src="./ToolbarButton.js"></script>
     <script type="text/babel">
-      const {
-        EditorState,
-        Modifier,
-        Entity
-      } = Draft;
+      const { EditorState, Modifier, Entity } = Draft;
 
       const {
         Editor,
         createPlugin,
-        pluginUtils: {entityStrategy}
+        pluginUtils: { entityStrategy },
       } = window.DraftExtend;
 
-      const {
-        convertToHTML,
-        convertFromHTML
-      } = window.DraftConvert;
+      const { convertToHTML, convertFromHTML } = window.DraftConvert;
 
       const ENTITY_TYPE = 'token';
 
       const TokenDecorator = {
         strategy: entityStrategy(ENTITY_TYPE),
-        component: (props) => {
+        component: props => {
           return (
             <span
               style={{
                 padding: '2px',
                 borderRadius: '2px',
                 background: '#de6262',
-                color: 'white'
+                color: 'white',
               }}
             >
               {props.children}
             </span>
           );
-        }
+        },
       };
 
       const entityToHTML = (entity, originalText) => {
@@ -71,22 +63,22 @@
         return originalText;
       };
 
-      const textToEntity = (text) => {
+      const textToEntity = text => {
         const results = [];
         const pattern = /\{\{\s?(\w+)\s?\}\}/gi;
         text.replace(pattern, (match, value, offset) => {
           results.push({
             offset,
             length: match.length,
-            entity: Entity.create(ENTITY_TYPE, 'IMMUTABLE', {value}),
-            result: value
+            entity: Entity.create(ENTITY_TYPE, 'IMMUTABLE', { value }),
+            result: value,
           });
         });
 
         return results;
       };
 
-      const TokenButton = ({editorState, onChange}) => {
+      const TokenButton = ({ editorState, onChange }) => {
         const insertToken = () => {
           const contentState = Modifier.insertText(
             editorState.getCurrentContent(),
@@ -94,51 +86,46 @@
             'Token Label',
             null,
             Entity.create(ENTITY_TYPE, 'IMMUTABLE', {
-              value: 'token'
+              value: 'token',
             })
           );
 
           onChange(
-            EditorState.push(
-              editorState,
-              contentState,
-              'insert-characters'
-            )
+            EditorState.push(editorState, contentState, 'insert-characters')
           );
         };
 
-        return (
-          <ToolbarButton
-            label="Insert token"
-            onClick={insertToken}
-          />
-        );
+        return <ToolbarButton label="Insert token" onClick={insertToken} />;
       };
 
       const TokenPlugin = createPlugin({
         decorators: TokenDecorator,
         buttons: TokenButton,
         textToEntity,
-        entityToHTML
+        entityToHTML,
       });
 
       const WithPlugin = TokenPlugin(Editor);
       const toHTML = TokenPlugin(convertToHTML);
       const fromHTML = TokenPlugin(convertFromHTML);
 
-      const TokenExample = createReactClass({
-        getInitialState() {
-          return {
+      class TokenExample extends React.Component {
+        constructor(props) {
+          super(props);
+
+          this.state = {
             editorState: EditorState.createWithContent(
               fromHTML('<div>Token example {{ token }}</div>')
-            )
+            ),
           };
-        },
+
+          this.onChange = this.onChange.bind(this);
+        }
 
         onChange(editorState) {
           console.log(toHTML(editorState.getCurrentContent()));
-          this.setState({editorState});
-        },
+          this.setState({ editorState });
+        }
 
         render() {
           return (
@@ -148,14 +135,17 @@
             />
           );
         }
-      });
+      }
 
-      ReactDOM.render(
-        <TokenExample />,
-        document.getElementById('target')
-      );
+      ReactDOM.render(<TokenExample />, document.getElementById('target'));
     </script>
     <script>
-      eval(Babel.transform(document.querySelector('script[type="text/babel"]').innerText, { presets: ['es2015', 'react']}).code)
+      eval(
+        Babel.transform(
+          document.querySelector('script[type="text/babel"]').innerText,
+          { presets: ['es2015', 'react'] }
+        ).code
+      );
     </script>
   </body>
+</html>
