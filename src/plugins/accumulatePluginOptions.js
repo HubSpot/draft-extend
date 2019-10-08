@@ -8,7 +8,9 @@ const emptyObject = {};
 const memoizedAccumulateFunction = memoize(accumulateFunction);
 const memoizedAssign = memoize((...args) => Object.assign({}, ...args));
 const memoizedConcat = memoize((a1, a2) => a1.concat(a2));
-const memoizedCoerceArray = memoize(arg => (Array.isArray(arg) ? arg : [arg]));
+const memoizedCoerceArray = memoize((arg = []) =>
+  Array.isArray(arg) ? arg : [arg]
+);
 
 export default (accumulation, pluginConfig) => {
   const accumulationWithDefaults = {
@@ -63,7 +65,7 @@ export default (accumulation, pluginConfig) => {
       keyBindingFn,
       accumulationWithDefaults.keyBindingFn
     ),
-    
+
     // `createPlugin` expects a singular `keyCommandListener`, but Editor
     // component props expect the plural `keyCommandListeners`, so return both
     // since this is used in both contexts

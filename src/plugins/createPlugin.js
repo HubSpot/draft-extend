@@ -98,7 +98,7 @@ const createPlugin = ({
         // keyCommandListener isn't used by the Editor component or other plugin
         // HOCs but keyCommandListeners is
         const {
-          keyCommandListener,
+          __keyCommandListener,
           ...editorPluginOptions
         } = pluginAccumulation;
 
