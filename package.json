@@ -3,19 +3,22 @@
   "version": "1.6.4",
   "description": "Build extensible Draft.js editors with configurable plugins and integrated serialization.",
   "main": "lib/index.js",
+  "module": "dist/draft-extend.esm.js",
+  "browser": "esm/index.js",
   "repository": "HubSpot/draft-extend",
   "scripts": {
-    "build": "npm run clean && npm run build:commonjs && npm run build:umd && npm run build:umd:min && npm run build:css",
+    "build": "npm run clean && npm run build:commonjs && npm run build:esm && npm run build:umd && npm run build:css",
     "build:commonjs": "BABEL_ENV=commonjs babel src --out-dir lib",
-    "build:umd": "webpack --config webpack.config.development.js ./src/index.js ./dist/draft-extend.js",
-    "build:umd:min": "webpack --config webpack.config.production.js ./src/index.js ./dist/draft-extend.min.js",
+    "build:esm": "BABEL_ENV=esm babel src --out-dir esm",
+    "build:umd": "rollup -c",
     "build:css": "cp ./src/style/*.css ./dist/",
     "clean": "rm -rf ./dist && rm -rf ./lib",
     "prepublish": "npm run build"
   },
   "files": [
     "dist",
-    "lib"
+    "lib",
+    "esm"
   ],
   "keywords": [
     "draft",
@@ -31,23 +34,27 @@
     "react-dom": "^15.0.0 || ^16.0.0"
   },
   "dependencies": {
+    "@babel/runtime": "^7.7.2",
     "immutable": "^3.8.1",
     "invariant": "^2.2.1",
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-core": "^6.7.7",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-transform-object-rest-spread": "^6.6.5",
-    "babel-preset-env": "^1.6.1",
-    "babel-preset-react": "^6.5.0",
-    "babel-standalone": "^6.7.7",
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.4",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/standalone": "^7.7.3",
     "draft-convert": "^2.1.4",
     "draft-js": "^0.10.5",
     "es6-shim": "^0.35.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
-    "webpack": "^1.13.0"
+    "rollup": "^1.26.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0",
+    "rollup-plugin-terser": "^5.1.2"
   }
 }
