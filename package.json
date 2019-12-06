@@ -11,7 +11,7 @@
     "build:esm": "BABEL_ENV=esm babel src --out-dir esm",
     "build:umd": "rollup -c",
     "build:css": "cp ./src/style/*.css ./dist/",
-    "clean": "rm -rf ./dist && rm -rf ./lib",
+    "clean": "rm -rf ./dist && rm -rf ./lib &&  rm -rf ./esm",
     "prepublish": "npm run build"
   },
   "files": [
