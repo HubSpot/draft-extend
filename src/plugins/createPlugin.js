@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { OrderedSet } from 'immutable';
 import memoize from '../util/memoize';
 import compose from '../util/compose';
-import accumulateFunction from '../util/accumulateFunction';
 import middlewareAdapter from '../util/middlewareAdapter';
+import accumulatePluginOptions from './accumulatePluginOptions';
 
 const emptyFunction = () => {};
 const emptyArray = [];
@@ -14,9 +14,6 @@ const defaultMiddlewareFunction = next => (...args) => next(...args);
 defaultMiddlewareFunction.__isMiddleware = true;
 
 const memoizedCompose = memoize(compose);
-const memoizedAccumulateFunction = memoize(accumulateFunction);
-const memoizedAssign = memoize((...args) => Object.assign({}, ...args));
-const memoizedConcat = memoize((a1, a2) => a1.concat(a2));
 const memoizedCoerceArray = memoize(arg => (Array.isArray(arg) ? arg : [arg]));
 const memoizedPassEmptyStyles = memoize(func => (nodeName, node) =>
   func(nodeName, node, OrderedSet())
@@ -73,46 +70,39 @@ const createPlugin = ({
       }
 
       render() {
-        const newStyleMap = memoizedAssign(this.props.styleMap, styleMap);
-        const newStyleFn = memoizedAccumulateFunction(
-          this.props.styleFn,
-          styleFn
-        );
-        const newDecorators = memoizedConcat(this.props.decorators, decorators);
-        const newButtons = memoizedConcat(this.props.buttons, buttons);
-        const newOverlays = memoizedConcat(this.props.overlays, overlays);
-        const newBlockRendererFn = memoizedAccumulateFunction(
-          blockRendererFn,
-          this.props.blockRendererFn
-        );
-        const newBlockStyleFn = memoizedAccumulateFunction(
-          blockStyleFn,
-          this.props.blockStyleFn
-        );
-        const newKeyBindingFn = memoizedAccumulateFunction(
-          keyBindingFn,
-          this.props.keyBindingFn
-        );
-        const newKeyCommandListeners = memoizedConcat(
-          this.props.keyCommandListeners,
-          memoizedCoerceArray(keyCommandListener)
+        const pluginAccumulation = accumulatePluginOptions(
+          {
+            styleMap: this.props.styleMap,
+            styleFn: this.props.styleFn,
+            decorators: this.props.decorators,
+            buttons: this.props.buttons,
+            overlays: this.props.overlays,
+            blockRendererFn: this.props.blockRendererFn,
+            blockStyleFn: this.props.blockStyleFn,
+            keyBindingFn: this.props.keyBindingFn,
+            keyCommandListeners: this.props.keyCommandListeners,
+          },
+          {
+            styleMap,
+            styleFn,
+            decorators,
+            buttons,
+            overlays,
+            blockRendererFn,
+            blockStyleFn,
+            keyBindingFn,
+            keyCommandListener,
+          }
         );
 
-        return (
-          <ToWrap
-            {...this.props}
-            ref="child"
-            styleMap={newStyleMap}
-            styleFn={newStyleFn}
-            decorators={newDecorators}
-            buttons={newButtons}
-            overlays={newOverlays}
-            blockRendererFn={newBlockRendererFn}
-            blockStyleFn={newBlockStyleFn}
-            keyBindingFn={newKeyBindingFn}
-            keyCommandListeners={newKeyCommandListeners}
-          />
-        );
+        // keyCommandListener isn't used by the Editor component or other plugin
+        // HOCs but keyCommandListeners is
+        const {
+          __keyCommandListener,
+          ...editorPluginOptions
+        } = pluginAccumulation;
+
+        return <ToWrap {...this.props} ref="child" {...editorPluginOptions} />;
       }
     }
 
@@ -143,6 +133,18 @@ const createPlugin = ({
     };
 
     return Plugin;
+  } else if (ToWrap && ToWrap.__isAccumulator) {
+    return accumulatePluginOptions(ToWrap, {
+      styleMap,
+      styleFn,
+      decorators,
+      buttons,
+      overlays,
+      blockRendererFn,
+      blockStyleFn,
+      keyBindingFn,
+      keyCommandListener,
+    });
   } else {
     // wrapping a converter function
     return (...args) => {
