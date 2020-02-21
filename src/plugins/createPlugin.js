@@ -13,12 +13,10 @@ const emptyObject = {};
 const defaultMiddlewareFunction = next => (...args) => next(...args);
 defaultMiddlewareFunction.__isMiddleware = true;
 
-const memoizedCompose = memoize(compose);
 const memoizedCoerceArray = memoize(arg => (Array.isArray(arg) ? arg : [arg]));
 const memoizedPassEmptyStyles = memoize(func => (nodeName, node) =>
   func(nodeName, node, OrderedSet())
 );
-const memoizedMiddlewareAdapter = memoize(middlewareAdapter);
 
 const createPlugin = ({
   displayName = 'Plugin',
@@ -170,45 +168,45 @@ const createPlugin = ({
 
         const oldOptions = args[0];
 
-        const newHTMLToStyle = memoizedCompose(
-          memoizedMiddlewareAdapter(memoizedPassEmptyStyles(htmlToStyle)),
-          memoizedMiddlewareAdapter(oldOptions.htmlToStyle)
+        const newHTMLToStyle = compose(
+          middlewareAdapter(memoizedPassEmptyStyles(htmlToStyle)),
+          middlewareAdapter(oldOptions.htmlToStyle)
         );
         newHTMLToStyle.__isMiddleware = true;
 
-        const newHTMLToBlock = memoizedCompose(
-          memoizedMiddlewareAdapter(htmlToBlock),
-          memoizedMiddlewareAdapter(oldOptions.htmlToBlock)
+        const newHTMLToBlock = compose(
+          middlewareAdapter(htmlToBlock),
+          middlewareAdapter(oldOptions.htmlToBlock)
         );
         newHTMLToBlock.__isMiddleware = true;
 
-        const newHTMLToEntity = memoizedCompose(
-          memoizedMiddlewareAdapter(htmlToEntity),
-          memoizedMiddlewareAdapter(oldOptions.htmlToEntity)
+        const newHTMLToEntity = compose(
+          middlewareAdapter(htmlToEntity),
+          middlewareAdapter(oldOptions.htmlToEntity)
         );
         newHTMLToEntity.__isMiddleware = true;
 
-        const newTextToEntity = memoizedCompose(
-          memoizedMiddlewareAdapter(textToEntity),
-          memoizedMiddlewareAdapter(oldOptions.textToEntity)
+        const newTextToEntity = compose(
+          middlewareAdapter(textToEntity),
+          middlewareAdapter(oldOptions.textToEntity)
         );
         newTextToEntity.__isMiddleware = true;
 
-        const newStyleToHTML = memoizedCompose(
-          memoizedMiddlewareAdapter(styleToHTML),
-          memoizedMiddlewareAdapter(oldOptions.styleToHTML)
+        const newStyleToHTML = compose(
+          middlewareAdapter(styleToHTML),
+          middlewareAdapter(oldOptions.styleToHTML)
         );
         newStyleToHTML.__isMiddleware = true;
 
-        const newBlockToHTML = memoizedCompose(
-          memoizedMiddlewareAdapter(blockToHTML),
-          memoizedMiddlewareAdapter(oldOptions.blockToHTML)
+        const newBlockToHTML = compose(
+          middlewareAdapter(blockToHTML),
+          middlewareAdapter(oldOptions.blockToHTML)
         );
         newBlockToHTML.__isMiddleware = true;
 
-        const newEntityToHTML = memoizedCompose(
-          memoizedMiddlewareAdapter(entityToHTML),
-          memoizedMiddlewareAdapter(oldOptions.entityToHTML)
+        const newEntityToHTML = compose(
+          middlewareAdapter(entityToHTML),
+          middlewareAdapter(oldOptions.entityToHTML)
         );
         newEntityToHTML.__isMiddleware = true;
 
