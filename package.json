@@ -29,8 +29,8 @@
   "license": "Apache License 2.0",
   "peerDependencies": {
     "draft-js": ">=0.7.0",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
   },
   "dependencies": {
     "@babel/runtime": "^7.7.2",
@@ -48,8 +48,8 @@
     "draft-convert": "^2.1.4",
     "draft-js": "^0.10.5",
     "es6-shim": "^0.35.0",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "rollup": "^1.26.3",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-node-resolve": "^5.2.0",
