@@ -34,6 +34,17 @@ const propTypes = {
   renderTray: PropTypes.func,
 };
 
+const defaultContextFn = () => console.error('DraftEditorContext is not provided in this scope.  Please check your setup.')
+export const DraftEditorContext = React.createContext({
+  getEditorState: defaultContextFn,
+  getReadOnly:defaultContextFn,
+  setReadOnly: defaultContextFn,
+  onChange: defaultContextFn,
+  focus: defaultContextFn,
+  blur: defaultContextFn,
+  editorRef: defaultContextFn,
+});
+
 class EditorWrapper extends React.Component {
   constructor(props) {
     super(props);
@@ -58,10 +69,8 @@ class EditorWrapper extends React.Component {
     this.getReadOnly = this.getReadOnly.bind(this);
     this.setReadOnly = this.setReadOnly.bind(this);
     this.getDecoratedState = this.getDecoratedState.bind(this);
-  }
 
-  getChildContext() {
-    return {
+    this.contextValue = {
       getEditorState: this.getDecoratedState,
       getReadOnly: this.getReadOnly,
       setReadOnly: this.setReadOnly,
@@ -261,33 +270,35 @@ class EditorWrapper extends React.Component {
     const readOnly = this.getReadOnly();
 
     return (
-      <div className={className}>
-        <div className="draft-extend-editor">
-          <Editor
-            {...otherProps}
-            ref="editor"
-            editorState={decoratedState}
-            readOnly={readOnly}
-            onChange={onChange}
-            blockStyleFn={blockStyleFn}
-            blockRendererFn={blockRendererFn}
-            customStyleMap={styleMap}
-            customStyleFn={styleFn}
-            handleKeyCommand={handleKeyCommand}
-            keyBindingFn={this.keyBindingFn}
-            handleReturn={this.handleReturn}
-            onEscape={this.onEscape}
-            onTab={this.onTab}
-            onUpArrow={this.onUpArrow}
-            onDownArrow={this.onDownArrow}
-          />
-          <div className="draft-extend-tray">{this.renderTray()}</div>
-          <div className="draft-extend-controls">
-            {this.renderPluginButtons()}
+      <DraftEditorContext.Provider value={this.contextValue}>
+        <div className={className}>
+          <div className="draft-extend-editor">
+            <Editor
+              {...otherProps}
+              ref="editor"
+              editorState={decoratedState}
+              readOnly={readOnly}
+              onChange={onChange}
+              blockStyleFn={blockStyleFn}
+              blockRendererFn={blockRendererFn}
+              customStyleMap={styleMap}
+              customStyleFn={styleFn}
+              handleKeyCommand={handleKeyCommand}
+              keyBindingFn={this.keyBindingFn}
+              handleReturn={this.handleReturn}
+              onEscape={this.onEscape}
+              onTab={this.onTab}
+              onUpArrow={this.onUpArrow}
+              onDownArrow={this.onDownArrow}
+            />
+            <div className="draft-extend-tray">{this.renderTray()}</div>
+            <div className="draft-extend-controls">
+              {this.renderPluginButtons()}
+            </div>
+            <div className="draft-extend-overlays">{this.renderOverlays()}</div>
           </div>
-          <div className="draft-extend-overlays">{this.renderOverlays()}</div>
         </div>
-      </div>
+      </DraftEditorContext.Provider>
     );
   }
 }
@@ -309,16 +320,6 @@ EditorWrapper.defaultProps = {
   keyBindingFn: () => {},
   readOnly: false,
   showButtons: true,
-};
-
-EditorWrapper.childContextTypes = {
-  getEditorState: PropTypes.func,
-  getReadOnly: PropTypes.func,
-  setReadOnly: PropTypes.func,
-  onChange: PropTypes.func,
-  focus: PropTypes.func,
-  blur: PropTypes.func,
-  editorRef: PropTypes.object,
 };
 
 export default KeyCommandController(EditorWrapper);
