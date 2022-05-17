@@ -10,7 +10,7 @@ const providedProps = {
   handleKeyCommand: PropTypes.func,
 };
 
-const KeyCommandController = Component => {
+const KeyCommandController = (Component) => {
   class KeyCommand extends React.Component {
     constructor(props) {
       super(props);
@@ -19,10 +19,7 @@ const KeyCommandController = Component => {
       this.handleKeyCommand = this.handleKeyCommand.bind(this);
       this.focus = this.focus.bind(this);
       this.blur = this.blur.bind(this);
-    }
-
-    componentWillMount() {
-      this.keyCommandOverrides = List(this.props.keyCommandListeners);
+      this.keyCommandOverrides = List(props.keyCommandListeners);
       this.keyCommandListeners = List();
     }
 
@@ -30,7 +27,7 @@ const KeyCommandController = Component => {
       // ensure valid props for deferral
       const propNames = Object.keys(providedProps);
       const presentProps = propNames.filter(
-        propName => this.props[propName] !== undefined
+        (propName) => this.props[propName] !== undefined
       );
       const nonePresent = presentProps.length === 0;
       const allPresent = presentProps.length === propNames.length;
@@ -43,7 +40,7 @@ const KeyCommandController = Component => {
       );
 
       if (allPresent) {
-        this.props.keyCommandListeners.forEach(listener => {
+        this.props.keyCommandListeners.forEach((listener) => {
           this.props.addKeyCommandListener(listener);
         });
       }
@@ -51,7 +48,7 @@ const KeyCommandController = Component => {
 
     componentWillUnmount() {
       if (this.props.removeKeyCommandListener) {
-        this.props.keyCommandListeners.forEach(listener => {
+        this.props.keyCommandListeners.forEach((listener) => {
           this.props.removeKeyCommandListener(listener);
         });
       }
@@ -77,7 +74,7 @@ const KeyCommandController = Component => {
       }
 
       this.keyCommandListeners = this.keyCommandListeners.filterNot(
-        l => l === listener
+        (l) => l === listener
       );
     }
 

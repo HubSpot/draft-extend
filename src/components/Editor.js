@@ -34,10 +34,13 @@ const propTypes = {
   renderTray: PropTypes.func,
 };
 
-const defaultContextFn = () => console.error('DraftEditorContext is not provided in this scope.  Please check your setup.')
+const defaultContextFn = () =>
+  console.error(
+    'DraftEditorContext is not provided in this scope.  Please check your setup.'
+  );
 export const DraftEditorContext = React.createContext({
   getEditorState: defaultContextFn,
-  getReadOnly:defaultContextFn,
+  getReadOnly: defaultContextFn,
   setReadOnly: defaultContextFn,
   onChange: defaultContextFn,
   focus: defaultContextFn,
@@ -81,13 +84,11 @@ class EditorWrapper extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.decorators.length === this.state.decorator._decorators.length
-    ) {
-      const allDecoratorsMatch = this.state.decorator._decorators.every(
+  getDerivedStateFromProps(props, state) {
+    if (props.decorators.length === state.decorator._decorators.length) {
+      const allDecoratorsMatch = state.decorator._decorators.every(
         (decorator, i) => {
-          return decorator === nextProps.decorators[i];
+          return decorator === props.decorators[i];
         }
       );
       if (allDecoratorsMatch) {
@@ -95,9 +96,9 @@ class EditorWrapper extends React.Component {
       }
     }
 
-    this.setState({
-      decorator: new nextProps.baseDecorator(nextProps.decorators),
-    });
+    return {
+      decorator: new props.baseDecorator(props.decorators),
+    };
   }
 
   keyBindingFn(e) {
@@ -156,7 +157,7 @@ class EditorWrapper extends React.Component {
     const propKeys = Object.keys(this.props);
     const propTypeKeys = Object.keys(propTypes);
 
-    const propsToPass = propKeys.filter(prop => {
+    const propsToPass = propKeys.filter((prop) => {
       return propTypeKeys.indexOf(prop) === -1;
     });
 
@@ -230,11 +231,8 @@ class EditorWrapper extends React.Component {
   }
 
   renderOverlays() {
-    const {
-      onChange,
-      addKeyCommandListener,
-      removeKeyCommandListener,
-    } = this.props;
+    const { onChange, addKeyCommandListener, removeKeyCommandListener } =
+      this.props;
 
     const decoratedState = this.getDecoratedState();
 
