@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Editor,
   EditorState,
   CompositeDecorator,
   getDefaultKeyBinding,
-} from 'draft-js';
-import KeyCommandController from './KeyCommandController';
-import OverlayWrapper from './OverlayWrapper';
+} from "draft-js";
+import KeyCommandController from "./KeyCommandController";
+import OverlayWrapper from "./OverlayWrapper";
 
 const propTypes = {
   className: PropTypes.string,
@@ -34,10 +34,13 @@ const propTypes = {
   renderTray: PropTypes.func,
 };
 
-const defaultContextFn = () => console.error('DraftEditorContext is not provided in this scope.  Please check your setup.')
+const defaultContextFn = () =>
+  console.error(
+    "DraftEditorContext is not provided in this scope.  Please check your setup."
+  );
 export const DraftEditorContext = React.createContext({
   getEditorState: defaultContextFn,
-  getReadOnly:defaultContextFn,
+  getReadOnly: defaultContextFn,
   setReadOnly: defaultContextFn,
   onChange: defaultContextFn,
   focus: defaultContextFn,
@@ -81,13 +84,11 @@ class EditorWrapper extends React.Component {
     };
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.decorators.length === this.state.decorator._decorators.length
-    ) {
-      const allDecoratorsMatch = this.state.decorator._decorators.every(
+  getDerivedStateFromProps(props, state) {
+    if (props.decorators.length === state.decorator._decorators.length) {
+      const allDecoratorsMatch = state.decorator._decorators.every(
         (decorator, i) => {
-          return decorator === nextProps.decorators[i];
+          return decorator === props.decorators[i];
         }
       );
       if (allDecoratorsMatch) {
@@ -95,9 +96,9 @@ class EditorWrapper extends React.Component {
       }
     }
 
-    this.setState({
-      decorator: new nextProps.baseDecorator(nextProps.decorators),
-    });
+    return {
+      decorator: new props.baseDecorator(props.decorators),
+    };
   }
 
   keyBindingFn(e) {
@@ -112,35 +113,35 @@ class EditorWrapper extends React.Component {
   handleReturn(e, editorState) {
     return (
       (this.props.handleReturn && this.props.handleReturn(e, editorState)) ||
-      this.props.handleKeyCommand('return', e)
+      this.props.handleKeyCommand("return", e)
     );
   }
 
   onEscape(e) {
     return (
       (this.props.onEscape && this.props.onEscape(e)) ||
-      this.props.handleKeyCommand('escape', e)
+      this.props.handleKeyCommand("escape", e)
     );
   }
 
   onTab(e) {
     return (
       (this.props.onTab && this.props.onTab(e)) ||
-      this.props.handleKeyCommand('tab', e)
+      this.props.handleKeyCommand("tab", e)
     );
   }
 
   onUpArrow(e) {
     return (
       (this.props.onUpArrow && this.props.onUpArrow(e)) ||
-      this.props.handleKeyCommand('up-arrow', e)
+      this.props.handleKeyCommand("up-arrow", e)
     );
   }
 
   onDownArrow(e) {
     return (
       (this.props.onDownArrow && this.props.onDownArrow(e)) ||
-      this.props.handleKeyCommand('down-arrow', e)
+      this.props.handleKeyCommand("down-arrow", e)
     );
   }
 
@@ -156,7 +157,7 @@ class EditorWrapper extends React.Component {
     const propKeys = Object.keys(this.props);
     const propTypeKeys = Object.keys(propTypes);
 
-    const propsToPass = propKeys.filter(prop => {
+    const propsToPass = propKeys.filter((prop) => {
       return propTypeKeys.indexOf(prop) === -1;
     });
 
@@ -193,7 +194,7 @@ class EditorWrapper extends React.Component {
   renderTray() {
     const { renderTray } = this.props;
 
-    if (typeof renderTray !== 'function') {
+    if (typeof renderTray !== "function") {
       return null;
     }
 
@@ -230,11 +231,8 @@ class EditorWrapper extends React.Component {
   }
 
   renderOverlays() {
-    const {
-      onChange,
-      addKeyCommandListener,
-      removeKeyCommandListener,
-    } = this.props;
+    const { onChange, addKeyCommandListener, removeKeyCommandListener } =
+      this.props;
 
     const decoratedState = this.getDecoratedState();
 
@@ -306,7 +304,7 @@ class EditorWrapper extends React.Component {
 EditorWrapper.propTypes = propTypes;
 
 EditorWrapper.defaultProps = {
-  className: '',
+  className: "",
   editorState: EditorState.createEmpty(),
   onChange: () => {},
   decorators: [],
