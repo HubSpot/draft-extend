@@ -1,8 +1,8 @@
-import React from "react";
-import PropTypes from "prop-types";
-import invariant from "invariant";
-import { List } from "immutable";
-import { EditorState } from "draft-js";
+import React from 'react';
+import PropTypes from 'prop-types';
+import invariant from 'invariant';
+import { List } from 'immutable';
+import { EditorState } from 'draft-js';
 
 const providedProps = {
   addKeyCommandListener: PropTypes.func,
@@ -35,7 +35,7 @@ const KeyCommandController = (Component) => {
       invariant(
         nonePresent || allPresent,
         `KeyCommandController: A KeyCommandController is receiving only some props (${presentProps.join(
-          ", "
+          ', '
         )}) necessary to defer to a parent key command controller.`
       );
 
