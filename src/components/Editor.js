@@ -84,7 +84,7 @@ class EditorWrapper extends React.Component {
     };
   }
 
-  getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props, state) {
     if (props.decorators.length === state.decorator._decorators.length) {
       const allDecoratorsMatch = state.decorator._decorators.every(
         (decorator, i) => {
@@ -92,7 +92,7 @@ class EditorWrapper extends React.Component {
         }
       );
       if (allDecoratorsMatch) {
-        return;
+        return {};
       }
     }
 
