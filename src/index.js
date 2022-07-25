@@ -1,4 +1,4 @@
-import Editor, { DraftEditorContext } from './components/Editor';
+import Editor from './components/Editor';
 import Toolbar from './components/Toolbar';
 import KeyCommandController from './components/KeyCommandController';
 import createPlugin from './plugins/createPlugin';
@@ -14,5 +14,4 @@ export {
   accumulatePluginOptions,
   pluginUtils,
   compose,
-  DraftEditorContext
 };
