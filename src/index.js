@@ -5,7 +5,7 @@ import createPlugin from './plugins/createPlugin';
 import accumulatePluginOptions from './plugins/accumulatePluginOptions';
 import pluginUtils from './plugins/utils';
 import compose from './util/compose';
-
+import { withDraftExtendContext } from './components/withDraftExtendContext';
 export {
   Editor,
   Toolbar,
@@ -14,5 +14,6 @@ export {
   accumulatePluginOptions,
   pluginUtils,
   compose,
-  DraftEditorContext
+  DraftEditorContext,
+  withDraftExtendContext,
 };
