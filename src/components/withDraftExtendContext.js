@@ -5,11 +5,10 @@ import { DraftEditorContext } from './Editor';
 export const withDraftExtendContext = (Comp) => {
   class ContextAwareComp extends Component {
     render() {
-      <DraftEditorContext.Consumer>
-        {(value) => <Comp draftContext={value} {...this.props} />}
-      </DraftEditorContext.Consumer>;
+      return <Comp draftContext={this.context} {...this.props} />;
     }
   }
+  ContextAwareComp.contextType = DraftEditorContext;
 
   ContextAwareComp.WrappingComponent = Comp;
   return ContextAwareComp;
