@@ -10,15 +10,6 @@ export const withDraftExtendContext = (Comp) => {
       </DraftEditorContext.Consumer>;
     }
   }
-  ContextAwareComp.contextTypes = {
-    getEditorState: PropTypes.func,
-    getReadOnly: PropTypes.func,
-    setReadOnly: PropTypes.func,
-    onChange: PropTypes.func,
-    focus: PropTypes.func,
-    blur: PropTypes.func,
-    editorRef: PropTypes.object,
-  };
 
   ContextAwareComp.WrappingComponent = Comp;
   return ContextAwareComp;
