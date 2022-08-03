@@ -988,14 +988,14 @@ detect-libc@^1.0.2:
 
 draft-convert@^2.1.4:
   version "2.1.4"
-  resolved "https://npm.hubteam.com/npm-nexus/repository/npm-all/draft-convert/-/draft-convert-2.1.4.tgz#b8817000eaf251e95583c987adda085d67254a0d"
+  resolved "https://registry.yarnpkg.com/npm-nexus/repository/npm-all/draft-convert/-/draft-convert-2.1.4.tgz#b8817000eaf251e95583c987adda085d67254a0d"
   dependencies:
     immutable "~3.7.4"
     invariant "^2.2.1"
 
 draft-js@^0.10.5:
   version "0.10.5"
-  resolved "https://npm.hubteam.com/npm-nexus/repository/npm-all/draft-js/-/draft-js-0.10.5.tgz#bfa9beb018fe0533dbb08d6675c371a6b08fa742"
+  resolved "https://registry.yarnpkg.com/npm-nexus/repository/npm-all/draft-js/-/draft-js-0.10.5.tgz#bfa9beb018fe0533dbb08d6675c371a6b08fa742"
   dependencies:
     fbjs "^0.8.15"
     immutable "~3.7.4"
@@ -1465,7 +1465,7 @@ loose-envify@^1.0.0:
 
 loose-envify@^1.1.0, loose-envify@^1.4.0:
   version "1.4.0"
-  resolved "https://npm.hubteam.com/npm-nexus/repository/npm-all/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
+  resolved "https://registry.yarnpkg.com/npm-nexus/repository/npm-all/loose-envify/-/loose-envify-1.4.0.tgz#71ee51fa7be4caec1a63839f7e682d8132d30caf"
   dependencies:
     js-tokens "^3.0.0 || ^4.0.0"
 
@@ -1757,7 +1757,7 @@ promise@^7.1.1:
 
 prop-types@^15.6.2:
   version "15.8.1"
-  resolved "https://npm.hubteam.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
+  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   dependencies:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
@@ -1765,7 +1765,7 @@ prop-types@^15.6.2:
 
 prop-types@^15.7.2:
   version "15.7.2"
-  resolved "https://npm.hubteam.com/npm-nexus/repository/npm-all/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
+  resolved "https://registry.yarnpkg.com/npm-nexus/repository/npm-all/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   dependencies:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
@@ -1782,7 +1782,7 @@ rc@^1.2.7:
 
 react-dom@^16.3.0:
   version "16.14.0"
-  resolved "https://npm.hubteam.com/react-dom/-/react-dom-16.14.0.tgz#7ad838ec29a777fb3c75c3a190f661cf92ab8b89"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-16.14.0.tgz#7ad838ec29a777fb3c75c3a190f661cf92ab8b89"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -1791,15 +1791,15 @@ react-dom@^16.3.0:
 
 react-is@^16.13.1:
   version "16.13.1"
-  resolved "https://npm.hubteam.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
+  resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
 
 react-is@^16.8.1:
   version "16.8.6"
-  resolved "https://npm.hubteam.com/npm-nexus/repository/npm-all/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
+  resolved "https://registry.yarnpkg.com/npm-nexus/repository/npm-all/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
 
 react@^16.3.0:
   version "16.14.0"
-  resolved "https://npm.hubteam.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
+  resolved "https://registry.yarnpkg.com/react/-/react-16.14.0.tgz#94d776ddd0aaa37da3eda8fc5b6b18a4c9a3114d"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
@@ -1980,7 +1980,7 @@ sax@^1.2.4:
 
 scheduler@^0.19.1:
   version "0.19.1"
-  resolved "https://npm.hubteam.com/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.19.1.tgz#4f3e2ed2c1a7d65681f4c854fa8c5a1ccb40f196"
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"
