@@ -59,10 +59,10 @@ export default {
       );
     });
     invariant(
-      selections.length === 1,
+      selections.length <= 1,
       'getEntitySelection: More than one range with the same entityKey. Please use unique entity instances'
     );
-    return selections[0];
+    return selections.length > 0 ? selections[0] : null;
   },
 
   insertBlockAtCursor(editorState, block) {
